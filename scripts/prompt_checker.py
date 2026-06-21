@@ -10,6 +10,7 @@ This is not a replacement for the full quality-scoring workflow.
 from __future__ import annotations
 
 import argparse
+import re
 from pathlib import Path
 
 REQUIRED_HINTS = {
@@ -21,10 +22,37 @@ REQUIRED_HINTS = {
     "negative": ["禁止项", "不要", "避免"],
 }
 
+CAMERA_TIMELINE_HINTS = [
+    "摄影机",
+    "镜头",
+    "推近",
+    "拉远",
+    "横移",
+    "跟随",
+    "跟拍",
+    "环绕",
+    "升降",
+    "变焦",
+    "切焦",
+    "焦点",
+    "景别",
+    "近景",
+    "中景",
+    "特写",
+    "全景",
+    "半身",
+]
+
 VETO_PATTERNS = [
     "高级电影感，震撼，燃，很好看",
     "很高级，很震撼，很好看",
 ]
+
+TIMELINE_LINE_RE = re.compile(r"(^|\n)\s*(?:\d+\s*[-—]\s*\d+\s*秒|\d+\s*秒\s*[-—])[^\n]*")
+
+
+def _timeline_lines(text: str) -> list[str]:
+    return [match.group(0).strip() for match in TIMELINE_LINE_RE.finditer(text)]
 
 
 def check_prompt(text: str) -> tuple[list[str], list[str]]:
@@ -44,6 +72,14 @@ def check_prompt(text: str) -> tuple[list[str], list[str]]:
 
     if text.count("不要") > 14:
         warnings.append("禁止项可能过多，建议合并重复项。")
+
+    lines = _timeline_lines(text)
+    if lines:
+        weak_lines = [line for line in lines if not any(hint in line for hint in CAMERA_TIMELINE_HINTS)]
+        if weak_lines:
+            warnings.append("时间轴中存在未写入镜头控制、景别变化或焦点控制的时间段。")
+    elif "时间轴" in text:
+        warnings.append("检测到时间轴标题，但没有识别到明确的秒数段落。")
 
     return missing, warnings
 
