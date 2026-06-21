@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.2-timeline - 2026-06-22
+
+### Updated
+
+- Updated `prompt-script-master` Skill entrypoint with timeline-first Seedance 2.0 rules.
+- Added stricter timeline execution requirements for transition relation, scene dynamics, lighting changes, camera movement, lens/focal length, shot size, focus, depth of field, and rhythm.
+- Added timeline quality gates for checking whether each time segment is executable.
+- Expanded prompt checking heuristics for timeline, camera, focus, lens, scene, lighting, and transition coverage.
+
 ## v0.3.0-skill-scaffold - 2026-06-22
 
 ### Added
