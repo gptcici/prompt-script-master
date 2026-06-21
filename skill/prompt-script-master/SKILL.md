@@ -114,13 +114,22 @@ description: Use this skill when the user wants to create, review, optimize, or 
 - 参考素材冲突
 - 首尾帧无法自然衔接
 
-## 相关资源
+## 何时读取 references
 
-需要细节时读取：
+需要更细规则时读取：
 
-- `references/core-workflow.md`
-- `references/video-rules.md`
-- `references/quality-control.md`
-- `references/examples-guide.md`
+- `references/core-workflow.md`：上传内容确认、提问节奏、保存规则。
+- `references/video-rules.md`：时间轴、镜头语言、空间关系、情绪表达和负面提示词。
+- `references/quality-control.md`：11 项自检、一票否决、自动优化和必须询问的情况。
+- `references/examples-guide.md`：如何参考示范案例，但不直接照抄。
+- `references/templates.md`：需要稳定输出结构或素材说明模板时读取。
 
-模板可参考仓库根目录 `templates/`。
+## 可选脚本
+
+只有在用户明确需要本地工具、文件检查或导出时才使用脚本：
+
+- `scripts/prompt_wizard.py`：本地交互式生成提示词骨架。
+- `scripts/prompt_checker.py`：检查提示词文件是否缺少主体、场景、镜头、时间或禁止项。
+- `scripts/prompt_exporter.py`：把提示词文本导出为 Markdown 文件。
+
+默认对话生成提示词时，不需要运行脚本。
