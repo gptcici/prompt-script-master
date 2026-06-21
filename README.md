@@ -1,6 +1,14 @@
 # 提示词脚本大师
 
-> 一个导演助理式提示词生成系统，把简单口语想法转化为结构完整、镜头明确、动作细致、可直接用于 AI 视频生成工具的中文提示词。
+> 一个导演助理式 AI 视频提示词生成系统，把简单口语想法转化为结构完整、镜头明确、动作细致、可直接用于 AI 视频生成工具的中文提示词。
+
+## 当前版本
+
+```text
+v0.3.0-skill-scaffold
+```
+
+当前仓库已经包含规则文档、示范案例骨架、复用模板、本地工具脚本、ChatGPT Skill 雏形、打包验证流程和 CI 校验。
 
 ## 项目定位
 
@@ -13,7 +21,7 @@
 3. 通过专业默认值补齐画面、镜头、动作、灯光、参考素材、时间轴和禁止项。
 4. 上传内容后先拆解、复述、确认，再生成提示词，避免误解用户目标。
 5. 信息确认后自动生成完整中文提示词，并进行内部质量自检。
-6. 后续可扩展为可运行脚本工具和 ChatGPT Skill。
+6. 可打包为 ChatGPT Skill 使用。
 
 ## 当前原则
 
@@ -21,144 +29,123 @@
 - 默认模式：自动模式。
 - 默认目标模型：Seedance 2.0 全能参考。
 - 提问节奏：每轮 2-3 个问题。
-- 首要方向：先从 AI 视频提示词开始，未来扩展到图片、图生视频、分镜、角色一致性、广告、MV、电影镜头等。
 - 输出语言：完整中文提示词。
 - 输出风格：AI 模型提示词风格，适合直接复制到生成工具。
 - 单个分镜 / 单镜头时长：通常 6-15 秒。
-- 时间轴：根据镜头复杂度自动决定，不强制逐秒拆分。
 - 负面提示词：必须包含，但只禁止关键异常，不堆砌。
 - 参考素材：先自动判断用途，再让用户确认；必须标明参考内容和优先级。
-- 写法原则：动词先行，形容词收束；先写可见动作，再用形容词固定情绪。
+- 写法原则：动词先行，形容词收束。
 - 摄影语言：使用专业空间关系、运镜、器材、焦段、焦点和景深描述。
-- 构图术语：在镜头关系可用时尽量使用一种合适构图术语，尤其适合首帧、尾帧、ending pose；不强制堆砌。
 - 反推原则：无法判断镜头、基调或风格时，不硬编，先让用户提供素材或寻找参考进行反推。
-- GitHub 原则：未得到用户明确同意前，不上传；未得到明确覆盖指令前，不覆盖旧项目。
 
-## 上传内容后的默认流程
+## 仓库结构
 
-```
-用户上传内容
-↓
-系统拆解内容、总结表达内容 / 情绪 / 目的
-↓
-系统进行轻量级初步构思
-↓
-系统指出需要互联网学习、素材反推或用户帮助的地方
-↓
-等待用户确认或修改
-↓
-确认后生成提示词
-↓
-内部质量评分自检
-↓
-严重问题暂停询问，普通问题自动优化
-↓
-合格后输出可直接复制粘贴的完整中文提示词
-↓
-提醒加入参考素材
-```
-
-## 默认模型：Seedance 2.0 全能参考
-
-如果用户没有主动指定其他模型，系统默认按 Seedance 2.0 全能参考进行提示词生成。
-
-项目内部将“全能参考”理解为：围绕文字、图片、首帧、尾帧、人物模板、产品图、分镜图、场景图、风格图、视频参考和音频节奏参考，进行分级管理与提示词适配。
-
-## 项目层级
-
-提示词生成分为三个层级：
-
-1. 项目级：统一风格、基调、人物 / 产品身份、参考素材、统一一致性与禁止项。
-2. 分镜组级：多镜头空间连续性、人物与场景关系、背景是否正确、是否可合并镜头。
-3. 镜头级：单个镜头的动作、运镜、焦段、焦点、灯光、时间轴和局部禁止项。
-
-## 当前已沉淀模块
-
-1. 导演助理式自动提问模式。
-2. 上传内容后的理解确认流程。
-3. 拆解阶段的初步构思与学习需求判断。
-4. 视频提示词稳定输出结构。
-5. 动词先行、形容词收束写法。
-6. 专业摄影语言与空间关系规则。
-7. 镜头语言与运镜规则。
-8. 摄影参数与焦点控制规则。
-9. 时间轴与节奏规则。
-10. 情绪表达规则。
-11. 参考素材优先级规则。
-12. 一致性控制规则。
-13. 负面提示词精准度规则。
-14. AI 模型可执行性规则。
-15. 质量评分模块 11 项维度。
-16. 质量评分模块最终工作流。
-17. Seedance 2.0 全能参考默认模型规则。
-18. 项目级 / 分镜组级 / 镜头级分层规则。
-19. 素材命名与资产管理规则。
-20. 严重问题提示模板。
-21. 全流程规则修改模式。
-22. 版本更新与回滚规则。
-23. 导演风格拆解规则。
-
-## 推荐目录结构
-
-```
+```text
 prompt-script-master/
 ├── README.md
+├── INSTALL.md
+├── CHANGELOG.md
+├── VERSION
 ├── PROJECT_STATUS.md
-├── docs/
-│   ├── core-rules.md
-│   ├── video-director-assistant.md
-│   ├── prompt-writing-principles.md
-│   ├── cinematography-language.md
-│   ├── reference-priority.md
-│   ├── reverse-engineering-and-uncertainty.md
-│   ├── quality-scoring.md
-│   ├── quality-scoring-dimensions-5-11.md
-│   ├── quality-scoring-final-workflow.md
-│   ├── upload-intake-confirmation-flow.md
-│   ├── workflow-modification-mode.md
-│   ├── project-shot-hierarchy.md
-│   ├── confirmation-priority.md
-│   ├── seedance2-full-reference.md
-│   ├── asset-naming.md
-│   ├── output-format.md
-│   ├── severe-issue-templates.md
-│   ├── versioning-and-rollback.md
-│   ├── director-style-decomposition.md
-│   └── roadmap.md
-├── templates/
-├── examples/
-├── scripts/
-└── skill/
+├── docs/                 # 规则文档
+├── examples/             # 第一批优秀案例骨架，第 5 项细化暂停
+├── templates/            # 复用提示词模板
+├── scripts/              # 本地工具、验证和打包脚本
+├── skill/                # ChatGPT Skill 雏形
+├── tests/                # 最小测试样例
+└── .github/workflows/    # GitHub Actions 自动校验
 ```
 
-## 快速使用
+## 快速开始
 
-当用户上传一段内容时，系统先拆解并复述：
+### 1. 检查 Skill 目录
 
-```
-我先确认一下我的理解：
-你想表达的是……
-核心主体是……
-场景大概是……
-情绪基调是……
-镜头目的偏向……
-我的初步构思是……
-这里可能需要学习 / 补充的是……
-这个理解对吗？
+```bash
+python scripts/validate_skill.py skill/prompt-script-master
 ```
 
-用户确认后再生成完整提示词。
+### 2. 打包 Skill
 
-## 全流程修改入口
-
-用户输入：
-
-```
-我要修改全流程
+```bash
+python scripts/package_skill.py
 ```
 
-系统进入工作流修改模式，列出所有规则大类，用户选择类目后展示当前规则并允许修改。
+输出：
 
-## GitHub 上传提醒
+```text
+dist/skill.zip
+```
 
-本项目文件已经可以作为仓库阶段性版本保存，但在用户明确同意前，不应由助手上传到 GitHub。
+### 3. 检查打包文件
+
+```bash
+python scripts/validate_skill.py dist/skill.zip
+```
+
+### 4. 测试提示词结构
+
+```bash
+python scripts/prompt_checker.py tests/sample_prompt.txt
+```
+
+## 本地工具
+
+```text
+scripts/prompt_wizard.py      # 交互式提示词生成向导
+scripts/prompt_checker.py     # 提示词结构检查器
+scripts/prompt_exporter.py    # 提示词导出工具
+scripts/validate_skill.py     # Skill 目录 / zip 基础校验
+scripts/package_skill.py      # 打包 skill.zip
+```
+
+## ChatGPT Skill
+
+Skill 目录：
+
+```text
+skill/prompt-script-master/
+├── SKILL.md
+├── agents/openai.yaml
+├── references/
+└── scripts/
+```
+
+上传前请先运行：
+
+```bash
+python scripts/package_skill.py
+python scripts/validate_skill.py dist/skill.zip
+```
+
+安装说明见：
+
+```text
+INSTALL.md
+```
+
+## CI 校验
+
+GitHub Actions 会在 PR 和 main push 时运行：
+
+```bash
+python scripts/validate_skill.py skill/prompt-script-master
+python scripts/package_skill.py
+python scripts/validate_skill.py dist/skill.zip
+python scripts/prompt_checker.py tests/sample_prompt.txt
+```
+
+## 发布流程
+
+发布流程见：
+
+```text
+docs/release-process.md
+```
+
+## 暂停项
+
+```text
+examples 细化：暂停
+```
+
+当前只保留第一批案例骨架，不继续扩写 examples。
