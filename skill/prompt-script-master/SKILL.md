@@ -1,6 +1,6 @@
 ---
 name: prompt-script-master
-description: Use this skill when the user wants to create, review, optimize, or convert simple ideas into structured Chinese AI video prompts, especially for Seedance 2.0 full-reference workflows. The skill behaves like a video director assistant: it first clarifies the user's visual intention, reference materials, subject, scene, emotion, camera goal, and timing, then generates copy-ready prompts with timeline, camera language, consistency controls, and negative prompts. It is useful for image-to-video, first/last-frame video, concert shots, product ads, emotional closeups, storyboard reverse engineering, and multi-shot sequences.
+description: Use this skill when the user wants to create, review, optimize, or convert simple ideas into structured Chinese AI video prompts, especially for Seedance 2.0 full-reference workflows. The skill behaves like a video director assistant: it first clarifies the user's visual intention, reference materials, subject, scene, emotion, camera goal, and timing, then generates copy-ready prompts with timeline-embedded camera controls, consistency controls, and negative prompts. It is useful for image-to-video, first/last-frame video, concert shots, product ads, emotional closeups, storyboard reverse engineering, and multi-shot sequences.
 ---
 
 # 提示词脚本大师
@@ -54,6 +54,37 @@ description: Use this skill when the user wants to create, review, optimize, or 
 
 必须写清每个素材参考什么、锁定什么、可以调整什么。
 
+## 时间轴与镜头控制硬规则
+
+镜头控制必须写进时间轴内部。
+
+每一个时间段都必须同时包含：
+
+1. 画面动作：主体在做什么，环境如何变化。
+2. 镜头控制：推、拉、摇、移、跟拍、环绕、升降、变焦、切焦或保持静止。
+3. 景别 / 构图 / 焦点变化：从什么景别到什么景别，焦点锁定谁，是否浅景深或背景虚化。
+
+不要只在单独的“镜头语言与摄影参数”段落里写运镜。单独的镜头语言段落只能作为全局风格、器材、焦段、画幅、景深基调的补充，不能替代时间轴里的逐段运镜。
+
+错误写法：
+
+```text
+【时间轴】
+0-4 秒：歌手站在舞台中央唱歌。
+4-8 秒：时间环点亮，灯光爆发。
+
+【镜头语言】
+镜头缓慢推近，焦点锁定歌手。
+```
+
+正确写法：
+
+```text
+【时间轴】
+0-4 秒：歌手站在舞台中央抬眼唱出副歌，摄影机从正前方中景缓慢推近到半身近景，焦点锁定她的眼神和麦克风，背景观众灯海保持柔和虚化。
+4-8 秒：副歌强拍落下，背后时间环逐层点亮，摄影机继续轻微推近并略微仰拍，焦点稳定跟随歌手面部，舞台灯光从后方穿过烟雾形成轮廓光。
+```
+
 ## 时间规则
 
 单个分镜或单镜头通常控制在 6-15 秒。
@@ -68,8 +99,8 @@ description: Use this skill when the user wants to create, review, optimize, or 
 1. 生成规格
 2. 参考素材说明
 3. 镜头目标
-4. 时间轴
-5. 镜头语言与摄影参数
+4. 时间轴：每个时间段必须写入画面动作 + 镜头控制 + 景别 / 焦点变化
+5. 镜头语言与摄影参数：只写全局器材、焦段、画幅、景深基调，不替代时间轴运镜
 6. 灯光、场景与动态
 7. 一致性要求
 8. 禁止项
@@ -78,7 +109,7 @@ description: Use this skill when the user wants to create, review, optimize, or 
 
 1. 项目总设定
 2. 参考素材优先级
-3. 分镜 1 / 分镜 2 / 分镜 3
+3. 分镜 1 / 分镜 2 / 分镜 3：每个分镜都必须有嵌入镜头控制的时间轴
 4. 镜头之间的连续性要求
 5. 统一一致性要求
 6. 统一禁止项
@@ -90,7 +121,7 @@ description: Use this skill when the user wants to create, review, optimize, or 
 1. 画面表达主体明确度
 2. 场景与空间关系
 3. 动作细节与动词使用
-4. 镜头语言与运镜
+4. 时间轴内的镜头控制：每段是否明确写入运镜、景别和焦点变化
 5. 摄影参数与焦点控制
 6. 时间轴与节奏
 7. 情绪表达
@@ -109,7 +140,8 @@ description: Use this skill when the user wants to create, review, optimize, or 
 - 严重逻辑冲突
 - 单镜头超过 15 秒
 - 没有动作细节
-- 没有镜头语言
+- 时间轴中没有逐段镜头控制
+- 只有单独镜头语言段落，但时间轴没有运镜、景别或焦点变化
 - 没有整体风格与基调
 - 参考素材冲突
 - 首尾帧无法自然衔接
