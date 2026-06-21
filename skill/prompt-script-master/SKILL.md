@@ -1,6 +1,6 @@
 ---
 name: prompt-script-master
-description: Use this skill when the user wants to create, review, optimize, or convert simple ideas into structured Chinese AI video prompts, especially for Seedance 2.0 full-reference workflows. The skill behaves like a video director assistant: it first clarifies the user's visual intention, reference materials, subject, scene, emotion, camera goal, and timing, then generates copy-ready prompts with timeline-embedded camera controls, consistency controls, and negative prompts. It is useful for image-to-video, first/last-frame video, concert shots, product ads, emotional closeups, storyboard reverse engineering, and multi-shot sequences.
+description: Use this skill when the user wants to create, review, optimize, or convert simple ideas into structured Chinese AI video prompts, especially for Seedance 2.0 full-reference workflows. The skill generates copy-ready prompts whose timeline embeds transition relation, scene changes, lighting changes, camera movement, lens and focal length, shot size, focus, and rhythm.
 ---
 
 # 提示词脚本大师
@@ -28,7 +28,7 @@ description: Use this skill when the user wants to create, review, optimize, or 
 
 ## 核心工作流
 
-1. 先拆解用户输入，确认表达主体、场景、情绪、镜头目的和参考素材。
+1. 先拆解用户输入，确认主体、场景、情绪、镜头目的、参考素材和时长。
 2. 如果用户上传或粘贴内容，先复述理解，不立即生成最终提示词。
 3. 如果信息足够，按专业默认值补齐非核心参数。
 4. 如果存在严重冲突、参考冲突、时长问题或首尾帧无法衔接，先暂停并询问用户。
@@ -36,115 +36,50 @@ description: Use this skill when the user wants to create, review, optimize, or 
 6. 普通问题自动优化，严重问题询问用户。
 7. 最终只输出可复制的中文提示词，除非用户要求展示过程或评分。
 
-## 写作原则
+## v0.3.2 时间轴硬规则
 
-遵守“动词先行，形容词收束”：
+时间轴是视频提示词的执行主体。每个时间段都必须写成完整的视频生成指令，而不是动作摘要。
 
-- 先写可见动作、状态变化、空间关系、镜头运动。
-- 再用少量形容词固定情绪或质感。
-- 不要只写高级、震撼、孤独、电影感等抽象词。
+每个时间段必须包含：
 
-## 参考素材规则
+1. 衔接关系：开场建立、衔接上一段、镜头切到、从上一段继续、由上一段转入等。
+2. 画面动作：主体在做什么。
+3. 场景动态：背景、道具、空间层次如何变化。
+4. 光线变化：主光、背光、轮廓光、反光、阴影、色温或亮度如何变化。
+5. 镜头控制：推近、拉远、横移、跟随、环绕、升降、变焦、切焦或保持静止。
+6. 摄影信息：摄影机视角、焦段或镜头类型、景别变化、构图、焦点对象、景深状态。
+7. 情绪节奏：这一段的情绪推进或收束。
 
-如果存在参考素材，先分类：
+不要把“光线、场景与动态”单独写成主执行板块。它们必须嵌入每个时间轴段落。
 
-1. 必须锁定参考：人物模板、产品定型、首帧、尾帧、角色定妆、品牌主视觉。
-2. 强参考：分镜图、场景结构、镜头路径、灯光氛围、视频运动、音乐节奏。
-3. 仅参考范围：材质、局部表情、颜色、光效、氛围、小道具。
+不要把“镜头语言与摄影参数”单独写成主执行板块。运镜、器材、焦段、焦点必须嵌入每个时间轴段落。
 
-必须写清每个素材参考什么、锁定什么、可以调整什么。
-
-## 时间轴与镜头控制硬规则
-
-镜头控制必须写进时间轴内部。
-
-每一个时间段都必须同时包含：
-
-1. 画面动作：主体在做什么，环境如何变化。
-2. 镜头控制：推、拉、摇、移、跟拍、环绕、升降、变焦、切焦或保持静止。
-3. 景别 / 构图 / 焦点变化：从什么景别到什么景别，焦点锁定谁，是否浅景深或背景虚化。
-
-不要只在单独的“镜头语言与摄影参数”段落里写运镜。单独的镜头语言段落只能作为全局风格、器材、焦段、画幅、景深基调的补充，不能替代时间轴里的逐段运镜。
-
-错误写法：
-
-```text
-【时间轴】
-0-4 秒：歌手站在舞台中央唱歌。
-4-8 秒：时间环点亮，灯光爆发。
-
-【镜头语言】
-镜头缓慢推近，焦点锁定歌手。
-```
-
-正确写法：
-
-```text
-【时间轴】
-0-4 秒：歌手站在舞台中央抬眼唱出副歌，摄影机从正前方中景缓慢推近到半身近景，焦点锁定她的眼神和麦克风，背景观众灯海保持柔和虚化。
-4-8 秒：副歌强拍落下，背后时间环逐层点亮，摄影机继续轻微推近并略微仰拍，焦点稳定跟随歌手面部，舞台灯光从后方穿过烟雾形成轮廓光。
-```
-
-## 时间规则
-
-单个分镜或单镜头通常控制在 6-15 秒。
-
-- 低于 6 秒且动作复杂：建议延长或合并。
-- 超过 15 秒：询问用户拆分或压缩。
-
-## 输出结构
+## 默认输出结构
 
 单镜头默认结构：
 
 1. 生成规格
 2. 参考素材说明
-3. 镜头目标
-4. 时间轴：每个时间段必须写入画面动作 + 镜头控制 + 景别 / 焦点变化
-5. 镜头语言与摄影参数：只写全局器材、焦段、画幅、景深基调，不替代时间轴运镜
-6. 灯光、场景与动态
-7. 一致性要求
-8. 禁止项
+3. 整体目标与风格基调
+4. 时间轴：每段必须写入衔接关系、画面动作、场景动态、光线变化、镜头控制、摄影信息、情绪节奏
+5. 全局摄影基调：只写整体一致的画幅、色彩、质感和总体摄影风格，不替代时间轴
+6. 一致性要求
+7. 禁止项
 
 多镜头默认结构：
 
-1. 项目总设定
+1. 项目总设定与风格基调
 2. 参考素材优先级
-3. 分镜 1 / 分镜 2 / 分镜 3：每个分镜都必须有嵌入镜头控制的时间轴
+3. 分镜 1 / 分镜 2 / 分镜 3：每个分镜都必须有完整时间轴
 4. 镜头之间的连续性要求
 5. 统一一致性要求
 6. 统一禁止项
 
 ## 质量自检
 
-内部检查以下 11 项：
+内部检查：主体、场景、动作、时间轴衔接、场景动态、光线变化、镜头控制、摄影信息、情绪节奏、参考素材优先级、一致性、禁止项和模型可执行性。
 
-1. 画面表达主体明确度
-2. 场景与空间关系
-3. 动作细节与动词使用
-4. 时间轴内的镜头控制：每段是否明确写入运镜、景别和焦点变化
-5. 摄影参数与焦点控制
-6. 时间轴与节奏
-7. 情绪表达
-8. 参考素材优先级
-9. 一致性控制
-10. 负面提示词精准度
-11. AI 模型可执行性
-
-默认不向用户展示评分。
-
-## 一票否决项
-
-如果出现以下问题，不直接输出最终提示词：
-
-- 主体不明确
-- 严重逻辑冲突
-- 单镜头超过 15 秒
-- 没有动作细节
-- 时间轴中没有逐段镜头控制
-- 只有单独镜头语言段落，但时间轴没有运镜、景别或焦点变化
-- 没有整体风格与基调
-- 参考素材冲突
-- 首尾帧无法自然衔接
+如果时间轴没有逐段说明怎么衔接、画面发生什么、光线如何变化、摄影机怎么拍、焦段 / 景别 / 焦点是什么，不能直接输出最终提示词。
 
 ## 何时读取 references
 
@@ -155,13 +90,13 @@ description: Use this skill when the user wants to create, review, optimize, or 
 - `references/quality-control.md`：11 项自检、一票否决、自动优化和必须询问的情况。
 - `references/examples-guide.md`：如何参考示范案例，但不直接照抄。
 - `references/templates.md`：需要稳定输出结构或素材说明模板时读取。
+- `references/timeline-execution-rules.md`：需要强制检查时间轴执行信息时读取。
+- `references/timeline-quality-gates.md`：需要判断输出是否通过时间轴质量门槛时读取。
 
 ## 可选脚本
 
 只有在用户明确需要本地工具、文件检查或导出时才使用脚本：
 
-- `scripts/prompt_wizard.py`：本地交互式生成提示词骨架。
 - `scripts/prompt_checker.py`：检查提示词文件是否缺少主体、场景、镜头、时间或禁止项。
-- `scripts/prompt_exporter.py`：把提示词文本导出为 Markdown 文件。
 
 默认对话生成提示词时，不需要运行脚本。
