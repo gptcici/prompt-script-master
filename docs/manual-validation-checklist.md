@@ -66,7 +66,7 @@ zip 大小：
 
 ## 5. 通过标准
 
-以下全部完成后，才能认为 `v0.3.0-skill-scaffold` 进入可试用状态：
+以下全部完成后，才能认为 `v0.3.2-timeline` 进入可试用状态：
 
 - [ ] GitHub Actions 通过。
 - [ ] `skill.zip` 上传成功。
