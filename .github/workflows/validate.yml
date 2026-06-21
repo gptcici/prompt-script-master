@@ -1,0 +1,32 @@
+name: Validate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate skill directory
+        run: python scripts/validate_skill.py skill/prompt-script-master
+
+      - name: Package skill
+        run: python scripts/package_skill.py
+
+      - name: Validate skill zip
+        run: python scripts/validate_skill.py dist/skill.zip
+
+      - name: Check sample prompt
+        run: python scripts/prompt_checker.py tests/sample_prompt.txt
