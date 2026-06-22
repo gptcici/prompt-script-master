@@ -5,10 +5,10 @@
 ## 当前版本
 
 ```text
-v0.4.6-concert-live-mv-reference
+v0.5.0-state-machine
 ```
 
-当前版本为：演唱会 / Live MV / 舞台表演【轻量参考增强】版本。
+当前版本为：工业级状态机确认优先版本（Confirmation-first State Machine）。
 
 ## 项目定位
 
@@ -26,33 +26,16 @@ v0.4.6-concert-live-mv-reference
 ## 当前原则
 
 - 默认输入：简单口语
-- 默认模式：自动模式
+- 默认模式：确认优先状态机（Confirmation-first State Machine）
 - 默认目标模型：Seedance 2.0 全能参考
 - 提问节奏：每轮 2-3 个问题
 - 输出语言：完整中文提示词
-- 输出风格：AI 模型提示词风格
 - 单镜头时长：6-15 秒
 - 负面提示词：只保留关键异常
 
-## v0.4.6 说明
+## 状态机版本
 
-本版本仅作为“演唱会 / Live MV 规则的轻量参考增强”，不会改变主流程状态机或核心工作流。
-
-## 仓库结构
-
-```text
-prompt-script-master/
-├── README.md
-├── INSTALL.md
-├── CHANGELOG.md
-├── VERSION
-├── docs/
-├── examples/
-├── templates/
-├── scripts/
-├── skill/
-└── tests/
-```
+当前系统已升级为工业级 fail-closed 状态机版本（v0.5.0）。
 
 ## Skill
 
