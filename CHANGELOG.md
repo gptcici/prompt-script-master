@@ -1,46 +1,18 @@
 # Changelog
 
-## v0.4.6-concert-live-mv-rules - 2026-06-22
+## v0.4.6-concert-live-mv-reference - 2026-06-22
 
-### Added
+### Changed
 
-- Added concert / live MV / stage performance generation rules.
-- Introduced three-line narrative structure (main performer / audience / stage space).
-- Added music-driven editing logic (beat, chorus, emotional transitions).
-- Added audience-as-visual-system rule (light sticks, crowd emotion, rhythm participation).
-- Expanded camera system for concert workflows (aerial, steadicam, crane coordination logic).
-- Added concert high-impact shot patterns (backlit hero silhouette, light sea, confetti climax, stage explosion moments).
+- Reframed concert / live MV rules as lightweight reference module instead of system-level enhancement.
+- Adjusted narrative to emphasize optional usage rather than workflow enforcement.
+- Softened camera and structure rules to serve as guidance only.
 
-### Updated
+### Notes
 
-- Strengthened timeline execution rules for music-synchronized cutting.
-- Improved camera movement library for live performance environments.
-- Enhanced classic shot library for stage and concert scenarios.
+- This version does not modify core Skill workflow or state machine.
+- Concert rules are now treated as optional reference material.
 
-## v0.3.2-timeline - 2026-06-22
+## v0.4.5
 
-### Updated
-
-- Updated `prompt-script-master` Skill entrypoint with timeline-first Seedance 2.0 rules.
-- Added stricter timeline execution requirements.
-- Expanded prompt checking heuristics.
-
-## v0.3.0-skill-scaffold - 2026-06-22
-
-### Added
-
-- Skill scaffold
-- Core docs
-- Scripts
-
-## v0.2.0-system-docs
-
-### Added
-
-- Initial system docs
-
-## v0.1.0-initial
-
-### Added
-
-- Initial repository structure
+- Previous stable version
