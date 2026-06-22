@@ -1,79 +1,95 @@
 ---
 name: prompt-script-master
-description: Use this skill when the user wants to create, review, optimize, or convert simple ideas into structured Chinese AI video prompts, especially for Seedance 2.0 full-reference workflows. The skill generates copy-ready prompts whose timeline embeds transition relation, scene changes, lighting changes, camera movement, lens and focal length, shot size, focus, and rhythm.
+description: use this skill when the user wants to create, review, optimize, or convert ideas into structured chinese ai video prompts, especially for seedance 2.0 full-reference workflows. trigger for video prompts, mv, singing, stage, dance, product ads, character emotion, story shorts, first-frame/last-frame transitions, storyboard prompts, and prompt audits. default to a director-assistant confirmation workflow before final prompts unless the user explicitly asks to skip confirmation or generate directly.
 ---
 
 # 提示词脚本大师
 
-## 触发场景
+## 最高优先级执行规则
 
-当用户需要生成、优化、检查或拆解 AI 视频提示词时，使用本 Skill。
+除非用户明确表达“跳过确认 / 直接生成 / 不用问 / 你决定 / 按默认来 / 快速给我一个版本”，否则任何 AI 视频提示词请求都必须先进入【复述确认阶段】。
 
-典型请求包括：
+在【复述确认阶段】中，禁止输出：
 
-- 把口语想法改成视频提示词
-- 根据参考图、首帧、尾帧或分镜图写提示词
-- 优化 Seedance 2.0 全能参考提示词
-- 设计单镜头或多镜头视频分镜
-- 检查提示词是否可执行
-- 把抽象情绪转化为可见镜头语言
+- 最终提示词
+- 完整时间轴
+- 可直接复制给视频模型的生成指令
+
+第一次响应必须包含：
+
+1. 参考资料识别
+2. 内容理解与专业复述
+3. 项目类型判断
+4. 信息完整度判断
+5. 动态级别建议
+6. 需要确认的问题，每轮最多 2-3 个
+7. 明确提醒：用户确认后才生成最终提示词
+
+只有用户完成确认，或用户明确要求跳过确认并直接生成，才能进入【最终提示词阶段】。
+
+## 快捷生成例外
+
+如果用户明确表达以下任一意思：
+
+- 直接生成
+- 不用问
+- 你决定
+- 跳过确认
+- 按默认来
+- 快速给我一个版本
+
+则允许自动补齐非核心专业参数，并直接输出最终提示词。此时不要输出复述、解释、选项或确认清单。
+
+快捷生成时仍必须内部完成质量检查，确保时间轴包含动作、场景动态、光线变化、镜头控制、焦段或镜头类型、景别、构图、焦点、景深和情绪推进。
+
+快捷生成不能覆盖以下情况：核心主体不清、多主体主次冲突、参考素材互相冲突、首尾帧无法自然连接、用户目标与素材明显不一致、单镜头时长不合理。这些情况必须暂停询问。
 
 ## 默认行为
 
 - 默认模型：Seedance 2.0 全能参考
 - 默认语言：中文
-- 默认模式：导演助理式自动模式
+- 默认模式：导演助理式确认流程
 - 默认提问节奏：每轮最多 2-3 个关键问题
-- 默认输出：可直接复制到 AI 视频模型的完整中文提示词
+- 默认最终交付：在用户确认后，输出可直接复制到 AI 视频模型的完整中文提示词
 
-## 工作阶段状态机
+## 状态机执行规则
 
-1. 识别输入类型
-2. 识别项目类型
-3. 识别参考资料
-4. 专业复述
-5. 补齐信息
-6. 音乐确认
-7. 动作方案确认
-8. 高潮镜头建议
-9. 用户确认闸门
-10. 最终生成
-11. 自检
+必须按以下状态推进，不得跳级：
 
-## 时间轴结构
+1. S1 需求识别
+2. S2 项目类型判断
+3. S3 参考资料识别
+4. S4 专业复述
+5. S5 信息完整度判断
+6. S6 音乐 / 动作 / 镜头等条件分支确认
+7. S7 用户确认闸门
+8. S8 最终提示词生成
+9. S9 内部自检
 
-单镜头默认结构：
+如果当前状态不是 S8，禁止输出最终提示词。快捷生成例外等同于用户授权跳过 S2-S7 的显性沟通，但仍需内部完成判断与自检。
 
-1. 生成规格
-2. 参考素材说明
-3. 整体目标与风格基调
-4. 时间轴（含镜头/光线/动作/节奏）
-5. 全局摄影基调
-6. 一致性
-7. 禁止项
+## 复述确认阶段首轮格式
 
-## 用户沟通隔离规则
+普通请求的首轮响应使用以下结构，不要给最终时间轴：
 
-最终提示词不得包含解释性内容或确认语。
+```text
+【参考资料识别】
+说明用户是否提供图片、首帧、尾帧、视频、音频、产品图、人物图、导演脚本或分镜。没有参考资料时，说明当前基于文字理解。
 
-## 一票否决项
+【专业复述】
+把用户口语需求改写成可拍摄、可执行的视频意图，包含主体、场景、情绪、目的、画面发展和可能隐喻。
 
-出现结构冲突或信息不足时不得生成最终提示词。
+【项目类型判断】
+判断属于舞台 / MV / 唱歌 / 跳舞、产品广告、人物情绪、剧情短片、首尾帧过渡、多镜头分镜、概念视觉或普通提示词优化。
 
-## references 读取规则
+【信息完整度】
+给出低 / 中 / 高，并列出已明确、缺失、不确定的信息。
 
-- core-workflow.md
-- restatement-stage-flow.md
-- project-type-rules.md
-- video-rules.md
-- action-library.md
-- classic-shot-library.md
-- templates.md
-- timeline-execution-rules.md
-- timeline-quality-gates.md
-- quality-control.md
-- reference-material-guide.md
-- shot-size-rules.md
-- final-prompt-purity.md
-- camera-movement-library.md
-- **concert-live-mv-rules.md（可选参考，不改变主流程）**
+【动态级别建议】
+给出轻 / 中 / 高动态级别，并说明对动作幅度、运镜速度、景别切换频率和灯光变化强度的影响。
+
+【需要你确认】
+每轮只问 2-3 个关键问题。
+
+确认后我再生成最终可复制提示词。
+```
