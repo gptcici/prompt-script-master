@@ -1,18 +1,20 @@
 # Changelog
 
-## v0.4.6-concert-live-mv-reference - 2026-06-22
+## v0.5.0-state-machine - 2026-06-22
 
 ### Changed
 
-- Reframed concert / live MV rules as lightweight reference module instead of system-level enhancement.
-- Adjusted narrative to emphasize optional usage rather than workflow enforcement.
-- Softened camera and structure rules to serve as guidance only.
+- Upgraded core Skill to industrial fail-closed state machine architecture.
+- Introduced CONFIRMATION_MODE vs DIRECT_MODE routing system.
+- Added strict gating rules preventing premature final prompt generation.
+- Strengthened reference-stage and workflow enforcement logic.
+- Added explicit state tokens (S1–S9) execution model.
 
 ### Notes
 
-- This version does not modify core Skill workflow or state machine.
-- Concert rules are now treated as optional reference material.
+- This version represents a structural upgrade from guidance-based workflow to enforced state-machine behavior.
+- All previous concert/live MV reference behavior is now integrated into core flow as optional rules.
 
-## v0.4.5
+## v0.4.6-concert-live-mv-reference
 
-- Previous stable version
+- Previous lightweight enhancement version.
