@@ -1,40 +1,46 @@
 # Changelog
 
+## v0.4.6-concert-live-mv-rules - 2026-06-22
+
+### Added
+
+- Added concert / live MV / stage performance generation rules.
+- Introduced three-line narrative structure (main performer / audience / stage space).
+- Added music-driven editing logic (beat, chorus, emotional transitions).
+- Added audience-as-visual-system rule (light sticks, crowd emotion, rhythm participation).
+- Expanded camera system for concert workflows (aerial, steadicam, crane coordination logic).
+- Added concert high-impact shot patterns (backlit hero silhouette, light sea, confetti climax, stage explosion moments).
+
+### Updated
+
+- Strengthened timeline execution rules for music-synchronized cutting.
+- Improved camera movement library for live performance environments.
+- Enhanced classic shot library for stage and concert scenarios.
+
 ## v0.3.2-timeline - 2026-06-22
 
 ### Updated
 
 - Updated `prompt-script-master` Skill entrypoint with timeline-first Seedance 2.0 rules.
-- Added stricter timeline execution requirements for transition relation, scene dynamics, lighting changes, camera movement, lens/focal length, shot size, focus, depth of field, and rhythm.
-- Added timeline quality gates for checking whether each time segment is executable.
-- Expanded prompt checking heuristics for timeline, camera, focus, lens, scene, lighting, and transition coverage.
+- Added stricter timeline execution requirements.
+- Expanded prompt checking heuristics.
 
 ## v0.3.0-skill-scaffold - 2026-06-22
 
 ### Added
 
-- ChatGPT Skill scaffold under `skill/prompt-script-master/`.
-- Skill entrypoint `SKILL.md`.
-- Skill UI metadata `agents/openai.yaml`.
-- Skill references for core workflow, video rules, quality control, examples, and templates.
-- Internal Skill scripts for prompt generation, checking, and export.
-- Repository-level Skill validation and packaging scripts.
-- Installation instructions.
+- Skill scaffold
+- Core docs
+- Scripts
 
-### Notes
-
-- Examples refinement is intentionally paused.
-- The Skill is now ready for local packaging and basic upload validation.
-
-## v0.2.0-system-docs - 2026-06-22
+## v0.2.0-system-docs
 
 ### Added
 
-- Core docs, examples, templates, scripts, and initial Skill scaffold.
-- First maintainable GitHub version.
+- Initial system docs
 
-## v0.1.0-initial - 2026-06-21
+## v0.1.0-initial
 
 ### Added
 
-- Initial README and project structure draft.
+- Initial repository structure
