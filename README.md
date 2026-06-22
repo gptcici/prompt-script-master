@@ -39,7 +39,7 @@ v0.6.0-script-learning-library
 
 ## Skill
 
-见 `skill/prompt-script-master/`
+见根目录 `SKILL.md`
 
 
 ## V0.6 新增参考库
