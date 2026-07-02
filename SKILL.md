@@ -1,6 +1,6 @@
 ---
 name: prompt-script-master
-description: use this skill when the user wants to create, review, optimize, or convert ideas into structured chinese ai video scripts and prompts, especially for Seedance 2.0 full-reference workflows, AIMV, MV, concert/live-stage, singing, dance, story shorts, first-frame/last-frame transitions, storyboard prompts, and prompt audits. includes internal reference libraries for concert performance actions, MV story structure, music-driven editing rhythm, lighting-emotion mapping, and media-asset guidance. all library content is abstract reference only and must never appear literally in generated outputs.
+description: use this skill when the user wants to create, review, optimize, or convert ideas into structured chinese ai video scripts and prompts, especially for Seedance 2.0/2.1 full-reference workflows, AIMV, MV, concert/live-stage, singing, dance, story shorts, first-frame/last-frame transitions, storyboard prompts, OpenAI image-family keyframes, and prompt audits. use prompt-optimizer V5 rules as the primary visual, reference-fidelity, photorealism, character-continuity, Seedance expression, lighting, depth, camera-transition, and industrial-storyboard rule source; use prompt-script-master rules as the primary confirmation, timeline, MV structure, and script delivery framework. all library content is abstract reference only and must never appear literally in generated outputs.
 ---
 
 # 提示词脚本大师
@@ -10,6 +10,31 @@ description: use this skill when the user wants to create, review, optimize, or 
 所有 references/ 与 assets/ 中的拆解、图片、视频、截图、动作库、分镜库、灯光库和案例库，只能作为内部导演方法参考。最终生成脚本或提示词中不得出现参考库里的真实人物、艺人、视频名、文件名、原始时间戳、歌词、字幕、水印、logo、专属桥段、具体道具组合或来源痕迹。
 
 使用参考库时必须先抽象为：动作逻辑、镜头结构、音乐节奏、光影情绪、空间调度和剪辑方法，再用用户当前项目重新表达。
+
+## V5 视觉规则优先级
+
+本 Skill 以 `prompt-script-master` 作为主入口和交付框架，但视觉生成、参考图一致性、真实摄影感与 Seedance 细节规则优先采用 `references/optimizer-v5/` 中的 Prompt Optimizer V5 规则。
+
+职责划分：
+
+1. `prompt-script-master` 负责确认流程、复述判断、视频脚本结构、时间轴、MV / 演唱会 / 舞台段落、音乐剪辑节奏和最终交付格式。
+2. `optimizer-v5` 负责 OpenAI image-family 关键帧、参考图锁脸、角色三视图 / 多视角连续性、真实光影、人物面光、景深空间、Seedance 表情肢体联动、运镜转场和工业化分镜套路。
+3. 当两套规则冲突时，流程与是否直接生成由 `prompt-script-master` 决定；画面真实性、脸部一致性、光影、景深、表情动作、运镜转场和镜头可拍摄性由 `optimizer-v5` 决定。
+4. 不要把 `optimizer-v5` 的会话状态文案、技能名称、库文件名或内部规则说明写进最终提示词。最终输出仍必须符合本 Skill 的纯净交付要求。
+
+必须优先读取 `optimizer-v5` 的情况：
+
+- 用户提供人物图、角色模板、定妆图、三视图、多视角、首帧、尾帧或参考图。
+- 用户要求 OpenAI image-family / GPT-image / image2 / 图片重绘 / 关键帧提示词。
+- 用户要求 Seedance 2.0 / 2.1 的表情动作、人物面光、真实光影、景深、焦段、镜头切换、转场或工业化分镜。
+- 用户要求 AIMV、AI 短剧、MV 关键帧、角色连续性、参考图反推、提示词审查或修复。
+
+常用读取路径：
+
+- 基础路由与输出：`optimizer-v5/task-routing.md`、`optimizer-v5/output-templates.md`、`optimizer-v5/model-adapters.md`、`optimizer-v5/command-system.md`
+- 参考图与角色一致性：`optimizer-v5/reference-fidelity-system.md`、`optimizer-v5/character-sheet-continuity-system.md`
+- 真实摄影与图像提示词：`optimizer-v5/realistic-photography-rules.md`、`optimizer-v5/ai-image-generation-rules.md`、`optimizer-v5/director-style-anchors.md`、`optimizer-v5/cinematic-camera-language.md`、`optimizer-v5/composition-space-structure.md`
+- Seedance 语序、权重、表情、光影、景深和运镜：`optimizer-v5/seedance-prompt-order-rules.md`、`optimizer-v5/seedance-expression-motion-rules.md`、`optimizer-v5/seedance-emotion-action-library.md`、`optimizer-v5/seedance-real-lighting-rules.md`、`optimizer-v5/seedance-lighting-scene-library.md`、`optimizer-v5/seedance-closeup-face-lighting-rules.md`、`optimizer-v5/seedance-closeup-face-lighting-library.md`、`optimizer-v5/seedance-depth-space-rules.md`、`optimizer-v5/seedance-camera-movement-transition-rules.md`、`optimizer-v5/seedance-industrial-storyboard-routines-library.md`
 
 ## 工业级状态机总则
 
@@ -130,17 +155,39 @@ description: use this skill when the user wants to create, review, optimize, or 
 
 ## 最终提示词结构
 
-单镜头默认结构：
+默认最终提示词采用 `optimizer-v5/output-templates.md` 的 V5 模板，不再默认使用旧版七段式字段表。
 
-1. 【生成规格】
-2. 【参考素材说明】
-3. 【整体目标与风格基调】
-4. 【时间轴】
-5. 【全局摄影基调】
-6. 【一致性要求】
-7. 【禁止项】
+Seedance 单镜头、首尾帧、表情动作、面光、景深、运镜或完整视频提示词默认输出：
 
-时间轴每个时间段必须同时包含：衔接关系、主体动作、场景动态、光线变化、镜头运动、摄影机视角、焦段或镜头类型、景别变化、构图、焦点对象、景深状态、情绪推进或收束。
+```text
+【正文提示词】
+[景别/镜头视角 + 核心运镜 + 核心景深属性 + 人物主体 + 关键外形特征 + 核心动作 + 表情肢体联动 + 面光/骨骼光影 + 场景环境光影 + 场景环境细节 + 景深空间细节补充 + 全局一致性约束]
+
+【负面提示词】
+[少量与场景匹配的兜底风险词]
+```
+
+修改、审查或修复提示词时默认输出：
+
+```text
+## 正文提示词
+[修改后的提示词]
+
+## 负面提示词
+[精简负面提示词]
+
+## 自检发现
+- [发现的问题]
+
+## 已修改
+- [修改内容]
+```
+
+OpenAI image-family / GPT-image / image2 图片提示词默认输出自然语言段落，不输出 Midjourney、Stable Diffusion、ComfyUI、Flux 或 tag-soup 格式，也不默认拆成正负面提示词。图片提示词必须包含参考图角色、主体身份、场景动作、真实光源、镜头构图、材质行为、摄影真实感和一致性要求。
+
+旧版七段式结构【生成规格 / 参考素材说明 / 整体目标 / 时间轴 / 全局摄影基调 / 一致性要求 / 禁止项】只用于用户明确要求“完整脚本 / 多段时间轴 / 分镜表 / 长 MV 段落设计”时；即使使用旧七段式，视觉细节仍必须遵守 V5 规则。
+
+时间轴每个时间段必须同时包含：衔接关系、主体动作、表情肢体联动、场景动态、光线变化、镜头运动、摄影机视角、焦段或镜头类型、景别变化、构图、焦点对象、景深状态、情绪推进或收束。
 
 ## 错误 / 正确行为
 
@@ -153,3 +200,5 @@ description: use this skill when the user wants to create, review, optimize, or 
 ## references 读取规则
 
 根据任务需要读取：core-workflow.md、restatement-stage-flow.md、project-type-rules.md、video-rules.md、action-library.md、classic-shot-library.md、templates.md、timeline-execution-rules.md、timeline-quality-gates.md、quality-control.md、reference-material-guide.md、shot-size-rules.md、final-prompt-purity.md、camera-movement-library.md、concert-live-mv-rules.md、reference-isolation-rules.md、script-learning-index.md、concert-performance-action-library.md、concert-shot-language-library.md、mv-story-structure-library.md、music-editing-rhythm-library.md、lighting-emotion-library.md、asset-library-guide.md。
+
+涉及参考图、真实摄影、OpenAI image-family、Seedance 语序权重、表情动作、面光、景深、运镜转场或工业化分镜时，优先读取 `optimizer-v5/` 下的对应规则文件；这些规则作为视觉执行层，不替代本 Skill 的确认流程、时间轴结构和最终交付格式。

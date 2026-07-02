@@ -15,16 +15,3 @@
 ## 不确定时
 
 如果项目类型可能跨越多个类型，先说明暂定类型，并请用户确认；不得直接跳过复述阶段进入最终提示词。
-
-
-## V0.6 音乐视频细分类型
-
-当项目属于舞台 / 唱歌 / MV / 跳舞时，继续细分：
-
-- 演唱会 / Live MV：读取 `concert-live-mv-rules.md`、`concert-performance-action-library.md`、`concert-shot-language-library.md`。
-- 多场景 MV / AIMV：读取 `mv-story-structure-library.md`。
-- 节奏驱动视频：读取 `music-editing-rhythm-library.md`。
-- 强光影情绪项目：读取 `lighting-emotion-library.md`。
-- 上传图片、视频、脚本拆解或关键帧时：读取 `reference-isolation-rules.md` 与 `asset-library-guide.md`。
-
-所有细分类型都必须遵守 `reference-isolation-rules.md`，不得把参考库中的来源内容写入最终提示词。

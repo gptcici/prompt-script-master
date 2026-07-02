@@ -22,37 +22,21 @@ REQUIRED_HINTS = {
     "negative": ["禁止项", "不要", "避免"],
 }
 
-CAMERA_TIMELINE_HINTS = [
-    "摄影机",
-    "镜头",
-    "推近",
-    "拉远",
-    "横移",
-    "跟随",
-    "跟拍",
-    "环绕",
-    "升降",
-    "变焦",
-    "切焦",
-    "焦点",
-    "景别",
-    "近景",
-    "中景",
-    "特写",
-    "全景",
-    "半身",
-]
+CAMERA_HINTS = ["摄影机", "镜头", "推近", "拉远", "横移", "跟随", "跟拍", "环绕", "升降", "变焦", "切焦"]
+FOCUS_LENS_HINTS = ["焦点", "焦段", "长焦", "广角", "85mm", "50mm", "35mm", "景别", "近景", "中景", "特写", "全景", "半身", "景深", "虚化"]
+SCENE_LIGHT_HINTS = ["场景", "背景", "空间", "道具", "舞台", "台面", "观众", "光", "反光", "阴影", "色温", "亮度", "暗部", "轮廓光"]
+TRANSITION_HINTS = ["开场", "建立", "衔接", "上一段", "继续", "镜头切到", "切到", "转入", "收束"]
 
-VETO_PATTERNS = [
-    "高级电影感，震撼，燃，很好看",
-    "很高级，很震撼，很好看",
-]
-
+VETO_PATTERNS = ["高级电影感，震撼，燃，很好看", "很高级，很震撼，很好看"]
 TIMELINE_LINE_RE = re.compile(r"(^|\n)\s*(?:\d+\s*[-—]\s*\d+\s*秒|\d+\s*秒\s*[-—])[^\n]*")
 
 
 def _timeline_lines(text: str) -> list[str]:
     return [match.group(0).strip() for match in TIMELINE_LINE_RE.finditer(text)]
+
+
+def _missing_hint(lines: list[str], hints: list[str]) -> bool:
+    return any(not any(hint in line for hint in hints) for line in lines)
 
 
 def check_prompt(text: str) -> tuple[list[str], list[str]]:
@@ -75,9 +59,14 @@ def check_prompt(text: str) -> tuple[list[str], list[str]]:
 
     lines = _timeline_lines(text)
     if lines:
-        weak_lines = [line for line in lines if not any(hint in line for hint in CAMERA_TIMELINE_HINTS)]
-        if weak_lines:
-            warnings.append("时间轴中存在未写入镜头控制、景别变化或焦点控制的时间段。")
+        if _missing_hint(lines, CAMERA_HINTS):
+            warnings.append("时间轴中存在未写入镜头控制的时间段。")
+        if _missing_hint(lines, FOCUS_LENS_HINTS):
+            warnings.append("时间轴中存在未写入焦段、景别、焦点或景深的时间段。")
+        if _missing_hint(lines, SCENE_LIGHT_HINTS):
+            warnings.append("时间轴中存在未写入场景动态或光线变化的时间段。")
+        if _missing_hint(lines, TRANSITION_HINTS):
+            warnings.append("时间轴中存在未写入衔接关系的时间段。")
     elif "时间轴" in text:
         warnings.append("检测到时间轴标题，但没有识别到明确的秒数段落。")
 
