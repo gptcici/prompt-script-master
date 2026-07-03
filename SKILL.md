@@ -7,7 +7,7 @@ description: use this skill when the user wants to create, review, optimize, or 
 
 ## 参考库隔离最高规则
 
-所有 references/ 与 assets/ 中的拆解、图片、视频、截图、动作库、分镜库、灯光库和案例库，只能作为内部导演方法参考。最终生成脚本或提示词中不得出现参考库里的真实人物、艺人、视频名、文件名、原始时间戳、歌词、字幕、水印、logo、专属桥段、具体道具组合或来源痕迹。
+所有 references/ 中的拆解、动作库、分镜库、灯光库和案例库，只能作为内部导演方法参考。最终生成脚本或提示词中不得出现参考库里的真实人物、艺人、视频名、文件名、原始时间戳、歌词、字幕、水印、logo、专属桥段、具体道具组合或来源痕迹。
 
 使用参考库时必须先抽象为：动作逻辑、镜头结构、音乐节奏、光影情绪、空间调度和剪辑方法，再用用户当前项目重新表达。
 
@@ -157,9 +157,13 @@ Seedance 语序、权重、表情、光影、景深和运镜：`optimizer-v5/see
 
 最终提示词统一采用三段式结构（详见 `templates/video-prompt-template.md`）。单镜头和多镜头使用同一结构，唯一区别是时间轴分段数量：单镜头 = 1 段，多镜头 = n 段。
 
+**最强格式规则，必须执行**：镜头框架之后，立刻锁死人物 + 参考图；人物核心外形特征必须紧跟参考图角色锁定，不得被环境、氛围、道具、色调或情绪描述隔开。人物权重永远高于环境。
+
+**强制面部光影规则，必须执行**：任何情况下，只要提示词描述到角色面部、眼神、表情、眨眼、侧脸、三分之二脸、皮肤、鼻梁、颧骨、下颌线或其他可见面部区域，必须加入人物面光/骨骼细节。可结合当前内容、氛围、人物参考图和风格，调用 `optimizer-v5` 光影库与 `lighting-emotion-library.md` 作为内部参考，再改写成具体可拍摄的面部光影描述。
+
 ```text
 【全程总定调】
-视频基础规格 + 镜头总基调
+镜头总基调 + 镜头框架
 参考图角色精准锁定
 人物核心外形特征
 整体场景总设定
@@ -186,7 +190,7 @@ OpenAI image-family / GPT-image / image2 图片提示词默认输出自然语言
 
 ## references 读取规则
 
-根据任务需要读取：core-workflow.md、restatement-stage-flow.md、project-type-rules.md、video-rules.md、classic-shot-library.md、templates.md、timeline-execution-rules.md、timeline-quality-gates.md、quality-control.md、reference-material-guide.md、shot-size-rules.md、final-prompt-purity.md、camera-movement-library.md、concert-live-mv-rules.md、reference-isolation-rules.md、script-learning-index.md、concert-performance-action-library.md、concert-shot-language-library.md、asset-library-guide.md、lighting-emotion-library.md。
+根据任务需要读取：core-workflow.md、restatement-stage-flow.md、project-type-rules.md、video-rules.md、classic-shot-library.md、templates.md、timeline-execution-rules.md、timeline-quality-gates.md、quality-control.md、reference-material-guide.md、shot-size-rules.md、final-prompt-purity.md、camera-movement-library.md、concert-live-mv-rules.md、reference-isolation-rules.md、script-learning-index.md、concert-performance-action-library.md、concert-shot-language-library.md、lighting-emotion-library.md。
 
 涉及参考图、真实摄影、OpenAI image-family、Seedance 语序权重、表情动作、面光、景深、运镜转场或工业化分镜时，优先读取 `optimizer-v5/` 下的对应规则文件；这些规则作为视觉执行层，不替代本 Skill 的确认流程、时间轴结构和最终交付格式。
 
