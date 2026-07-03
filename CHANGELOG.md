@@ -10,7 +10,7 @@
 
 ### Removed
 
-- 删除 3 个冗余库文件：`action-library.md`、`music-editing-rhythm-library.md`
+- 删除 3 个冗余库文件：`action-library.md`、`music-editing-rhythm-library.md`、`mv-story-structure-library.md`
 - 清除所有文档中的孤儿引用
 
 ### Changed
