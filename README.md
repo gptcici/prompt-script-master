@@ -1,4 +1,4 @@
-# 提示词脚本大师 (Prompt Script Master) v0.9.5
+# 提示词脚本大师 (Prompt Script Master) V0.9.6
 
 导演助理式的 AI 视频提示词生成 Skill，为 Seedance 2.0/2.1、OpenAI image-family 等模型提供结构化的中文视频脚本与提示词。
 
