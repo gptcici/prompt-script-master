@@ -1,10 +1,16 @@
 # Changelog
 
+## V0.9.6 - 2026-07-04
+
+### Changed
+
+- 版本号更新至 V0.9.6。
+
 ## v0.9.5-cross-reference - 2026-07-03
 
 ### Removed
 
-- 删除 3 个冗余库文件：`action-library.md`、`music-editing-rhythm-library.md`、`mv-story-structure-library.md`
+- 删除 3 个冗余库文件：`action-library.md`、`music-editing-rhythm-library.md`
 - 清除所有文档中的孤儿引用
 
 ### Changed
