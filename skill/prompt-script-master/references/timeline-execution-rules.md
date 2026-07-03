@@ -20,6 +20,15 @@
 
 当用户明确要求"一镜到底"时，不询问分段，直接按单镜头生成完整时间轴内容。
 
+
+## 强制面部光影规则
+
+任何时间轴段落中，只要描述到角色面部、眼神、表情、眨眼、侧脸、三分之二脸、皮肤、鼻梁、颧骨、下颌线或其他可见面部区域，`人物面光/骨骼光影` 项必须写入具体面光与骨骼锚点。
+
+必须结合当前场景、氛围、人物参考图和风格选择光影结构；可调用 `optimizer-v5/seedance-closeup-face-lighting-rules.md`、`optimizer-v5/seedance-closeup-face-lighting-library.md`、`optimizer-v5/seedance-real-lighting-rules.md`、`optimizer-v5/seedance-lighting-scene-library.md`、`optimizer-v5/seedance-chinese-fantasy-lighting-library.md` 和 `lighting-emotion-library.md` 作为内部参考。
+
+不要只写“柔和面光”或“真实面光”。必须落到鼻梁、眼窝、颧骨、下颌线、脸颊转折、眼神光、发丝轮廓光、皮肤肌理或环境反光等具体可拍摄细节。
+
 ## 时间轴分段格式
 
 每个时间段的字段格式：
