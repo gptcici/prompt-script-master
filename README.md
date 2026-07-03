@@ -31,8 +31,6 @@ prompt-script-master/
 │   ├── concert-live-mv-rules.md      # 演唱会/Live MV规则
 │   ├── concert-performance-action-library.md  # 演唱会表演动作库
 │   ├── concert-shot-language-library.md       # 演唱会镜头语言库
-│   ├── mv-story-structure-library.md          # MV故事结构库
-│   ├── music-editing-rhythm-library.md        # 音乐剪辑节奏库
 │   ├── lighting-emotion-library.md            # 灯光情绪库
 │   └── asset-library-guide.md                 # 素材库指南
 ├── references/optimizer-v5/         # Prompt Optimizer V5 视觉规则
@@ -124,7 +122,7 @@ prompt-script-master/
 
 ### ✅ 质量保障
 - 内部 9 阶段自检流程
-- 时间轴质量门（每段含衔接、动作、光影、运镜、景别、情绪等 12 项）
+- 时间轴质量门（9 项：景别 + 运镜 + 焦点 + 动作 + 表情肢体 + 面光/骨骼光影 + 环境光影 + 环境细节 + 景深）
 - 最终提示词纯净交付（不含解释、建议、选项）
 - 强制中断条件（冲突检测、信息缺失拦截）
 - 案例库引用验证

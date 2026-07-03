@@ -41,3 +41,9 @@
 ## 使用规则
 
 每次只推荐 2-4 个最适合的镜头方案。用户确认后，把镜头名拆成基础运镜、景别变化、焦点对象、光线变化和情绪作用写入时间轴；最终提示词中不要保留经典镜头名称。
+
+## Related
+
+- Library: `camera-movement-library.md` — basic camera movement primitives（本库的底层动作语法）
+- Rules: `optimizer-v5/cinematic-camera-language.md` — cinematic language framework
+- Rules: `optimizer-v5/seedance-camera-movement-transition-rules.md` — Seedance movement transition rules

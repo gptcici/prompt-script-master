@@ -35,3 +35,9 @@
 ## 组合规则
 
 单个时间段最多组合 2-3 个主要运镜动作，必须区分主动作和辅助动作。不要在同一段内同时堆叠推进、环绕、升降、旋转、变焦、转焦和穿越前景，除非拆成多个时间段。
+
+## Related
+
+- Library: `classic-shot-library.md` — classic/commercial shot recipes（本库为其底层动作语法）
+- Rules: `optimizer-v5/seedance-camera-movement-transition-rules.md` — Seedance movement transition rules
+- Rules: `optimizer-v5/cinematic-camera-language.md` — cinematic language framework

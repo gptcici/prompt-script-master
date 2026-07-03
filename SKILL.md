@@ -34,7 +34,7 @@ description: use this skill when the user wants to create, review, optimize, or 
 - 基础路由与输出：`optimizer-v5/task-routing.md`、`optimizer-v5/output-templates.md`、`optimizer-v5/model-adapters.md`、`optimizer-v5/command-system.md`
 - 参考图与角色一致性：`optimizer-v5/reference-fidelity-system.md`、`optimizer-v5/character-sheet-continuity-system.md`
 - 真实摄影与图像提示词：`optimizer-v5/realistic-photography-rules.md`、`optimizer-v5/ai-image-generation-rules.md`、`optimizer-v5/director-style-anchors.md`、`optimizer-v5/cinematic-camera-language.md`、`optimizer-v5/composition-space-structure.md`
-- Seedance 语序、权重、表情、光影、景深和运镜：`optimizer-v5/seedance-prompt-order-rules.md`、`optimizer-v5/seedance-expression-motion-rules.md`、`optimizer-v5/seedance-emotion-action-library.md`、`optimizer-v5/seedance-real-lighting-rules.md`、`optimizer-v5/seedance-lighting-scene-library.md`、`optimizer-v5/seedance-closeup-face-lighting-rules.md`、`optimizer-v5/seedance-closeup-face-lighting-library.md`、`optimizer-v5/seedance-depth-space-rules.md`、`optimizer-v5/seedance-camera-movement-transition-rules.md`、`optimizer-v5/seedance-industrial-storyboard-routines-library.md`
+Seedance 语序、权重、表情、光影、景深和运镜：`optimizer-v5/seedance-prompt-order-rules.md`、`optimizer-v5/seedance-expression-motion-rules.md`、`optimizer-v5/seedance-emotion-action-library.md`、`optimizer-v5/seedance-real-lighting-rules.md`、`optimizer-v5/seedance-lighting-scene-library.md`、`optimizer-v5/seedance-closeup-face-lighting-rules.md`、`optimizer-v5/seedance-closeup-face-lighting-library.md`、`optimizer-v5/seedance-chinese-fantasy-lighting-library.md`、`optimizer-v5/seedance-depth-space-rules.md`、`optimizer-v5/seedance-camera-movement-transition-rules.md`、`optimizer-v5/seedance-industrial-storyboard-routines-library.md`、`optimizer-v5/output-templates.md`。
 
 ## 工业级状态机总则
 
@@ -155,39 +155,26 @@ description: use this skill when the user wants to create, review, optimize, or 
 
 ## 最终提示词结构
 
-默认最终提示词采用 `optimizer-v5/output-templates.md` 的 V5 模板，不再默认使用旧版七段式字段表。
-
-Seedance 单镜头、首尾帧、表情动作、面光、景深、运镜或完整视频提示词默认输出：
+最终提示词统一采用三段式结构（详见 `templates/video-prompt-template.md`）。单镜头和多镜头使用同一结构，唯一区别是时间轴分段数量：单镜头 = 1 段，多镜头 = n 段。
 
 ```text
-【正文提示词】
-[景别/镜头视角 + 核心运镜 + 核心景深属性 + 人物主体 + 关键外形特征 + 核心动作 + 表情肢体联动 + 面光/骨骼光影 + 场景环境光影 + 场景环境细节 + 景深空间细节补充 + 全局一致性约束]
+【全程总定调】
+视频基础规格 + 镜头总基调
+参考图角色精准锁定
+人物核心外形特征
+整体场景总设定
 
-【负面提示词】
-[少量与场景匹配的兜底风险词]
+【时间轴分段】
+本段景别 + 本段运镜状态 + 焦点变化 + 核心动作 + 表情肢体联动 + 人物面光/骨骼光影 + 环境光影变化 + 环境细节补充 + 本段景深变化
+
+【全局收尾】
+整体风格质感
+全局一致性约束
 ```
 
-修改、审查或修复提示词时默认输出：
-
-```text
-## 正文提示词
-[修改后的提示词]
-
-## 负面提示词
-[精简负面提示词]
-
-## 自检发现
-- [发现的问题]
-
-## 已修改
-- [修改内容]
-```
+**时间轴规则权威来源声明**：`references/timeline-execution-rules.md` 和 `references/timeline-quality-gates.md` 是时间轴分段规则的唯一权威来源。时间轴每段必含上述 9 项，格式以本文件为准。
 
 OpenAI image-family / GPT-image / image2 图片提示词默认输出自然语言段落，不输出 Midjourney、Stable Diffusion、ComfyUI、Flux 或 tag-soup 格式，也不默认拆成正负面提示词。图片提示词必须包含参考图角色、主体身份、场景动作、真实光源、镜头构图、材质行为、摄影真实感和一致性要求。
-
-旧版七段式结构【生成规格 / 参考素材说明 / 整体目标 / 时间轴 / 全局摄影基调 / 一致性要求 / 禁止项】只用于用户明确要求“完整脚本 / 多段时间轴 / 分镜表 / 长 MV 段落设计”时；即使使用旧七段式，视觉细节仍必须遵守 V5 规则。
-
-时间轴每个时间段必须同时包含：衔接关系、主体动作、表情肢体联动、场景动态、光线变化、镜头运动、摄影机视角、焦段或镜头类型、景别变化、构图、焦点对象、景深状态、情绪推进或收束。
 
 ## 错误 / 正确行为
 
@@ -199,6 +186,21 @@ OpenAI image-family / GPT-image / image2 图片提示词默认输出自然语言
 
 ## references 读取规则
 
-根据任务需要读取：core-workflow.md、restatement-stage-flow.md、project-type-rules.md、video-rules.md、action-library.md、classic-shot-library.md、templates.md、timeline-execution-rules.md、timeline-quality-gates.md、quality-control.md、reference-material-guide.md、shot-size-rules.md、final-prompt-purity.md、camera-movement-library.md、concert-live-mv-rules.md、reference-isolation-rules.md、script-learning-index.md、concert-performance-action-library.md、concert-shot-language-library.md、mv-story-structure-library.md、music-editing-rhythm-library.md、lighting-emotion-library.md、asset-library-guide.md。
+根据任务需要读取：core-workflow.md、restatement-stage-flow.md、project-type-rules.md、video-rules.md、classic-shot-library.md、templates.md、timeline-execution-rules.md、timeline-quality-gates.md、quality-control.md、reference-material-guide.md、shot-size-rules.md、final-prompt-purity.md、camera-movement-library.md、concert-live-mv-rules.md、reference-isolation-rules.md、script-learning-index.md、concert-performance-action-library.md、concert-shot-language-library.md、asset-library-guide.md、lighting-emotion-library.md。
 
 涉及参考图、真实摄影、OpenAI image-family、Seedance 语序权重、表情动作、面光、景深、运镜转场或工业化分镜时，优先读取 `optimizer-v5/` 下的对应规则文件；这些规则作为视觉执行层，不替代本 Skill 的确认流程、时间轴结构和最终交付格式。
+
+## 维护注意事项
+
+- 编辑 `references/` 下的任何 `.md` 文件时，如果存在 `skill/prompt-script-master/references/` 快照副本，必须同步覆盖，否则会造成规则不一致。
+- 时间轴规则的唯一权威来源是 `references/timeline-execution-rules.md` 和 `references/timeline-quality-gates.md`。其 9 项分段格式（本段景别 + 本段运镜状态 + 焦点变化 + 核心动作 + 表情肢体联动 + 人物面光/骨骼光影 + 环境光影变化 + 环境细节补充 + 本段景深变化）基于黄金语序适配，是时间轴分段的唯一标准。
+- ⚠️ 时间轴格式变更联动清单：修改时间轴规则时必须同步更新以下 **6 个文件**并覆盖快照副本：
+  1. `references/timeline-execution-rules.md`（执行规则）
+  2. `references/timeline-quality-gates.md`（质量门控）
+  3. `SKILL.md`（权威来源声明 & 维护注意事项）
+  4. `README.md`（功能描述）
+  5. `docs/golden-tests.md`（全局通过标准 & 5 条测试用例）
+  6. `scripts/prompt_checker.py`（校验逻辑 & 提示词库）
+  **全部更新后**必须 `cp` 至 `skill/prompt-script-master/` 对应路径同步快照。
+- ⚠️ `optimizer-v5/seedance-prompt-order-rules.md` 和 `optimizer-v5/seedance-camera-movement-transition-rules.md` 的 Timeline splitting / 时间轴适配规则**已降级为非权威参考**，不得作为时间轴分段格式的决策依据。黄金语序（12 模块整体提示词结构）仍由 Seedance 文件定义，但时间轴分段格式的唯一标准是本目录下的 9 项格式。
+- ⚠️ **分段触发规则**（S8 阶段）：视频时长 > 5 秒且用户未声明"一镜到底"时，必须执行以下 4 步再生成时间轴：（1）**询问用户**是否需要分段；（2）**不定长分配**——不套用固定模板，根据每段内容权重合理分配时长；（3）**自行检查**——分配后自检动作密度匹配、总时长加总、段间推进逻辑；（4）**确认后继续**——将分段方案和时长展示给用户确认，确认后再写入 9 项格式的时间轴内容。用户明确要求一镜到底时跳过此步骤。
