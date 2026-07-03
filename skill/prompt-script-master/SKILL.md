@@ -178,7 +178,7 @@ Seedance 语序、权重、表情、光影、景深和运镜：`optimizer-v5/see
 
 **时间轴规则权威来源声明**：`references/timeline-execution-rules.md` 和 `references/timeline-quality-gates.md` 是时间轴分段规则的唯一权威来源。时间轴每段必含上述 9 项，格式以本文件为准。
 
-OpenAI image-family / GPT-image / image2 图片提示词默认输出自然语言段落，不输出 Midjourney、Stable Diffusion、ComfyUI、Flux 或 tag-soup 格式，也不默认拆成正负面提示词。图片提示词必须包含参考图角色、主体身份、场景动作、真实光源、镜头构图、材质行为、摄影真实感和一致性要求。
+OpenAI image-family / GPT-image / image2 图片提示词默认输出自然语言段落，不输出 Midjourney、Stable Diffusion、ComfyUI、Flux 或 tag-soup 格式，也不默认拆成正向栏与否定栏。图片提示词必须包含参考图角色、主体身份、场景动作、真实光源、镜头构图、材质行为、摄影真实感和一致性要求。
 
 ## 错误 / 正确行为
 

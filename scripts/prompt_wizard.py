@@ -18,7 +18,7 @@ def main() -> None:
     duration = ask("时长", "8 秒")
     action = ask("主要动作", "主体完成可见动作并形成稳定 ending pose")
     camera = ask("本段运镜状态", "固定机位缓慢推近，焦点锁定主体")
-    negative = ask("禁止项", "不要主体漂移，不要场景结构变化，不要字幕、水印、乱码文字")
+    consistency = ask("全局一致性约束", "主体身份、场景结构、动作连续性和画面焦点全程稳定")
 
     print("\n【全程总定调】")
     print(f"生成 {duration}，画幅 16:9，Seedance 2.0 全能参考。")
@@ -40,7 +40,7 @@ def main() -> None:
 
     print("\n【全局收尾】")
     print(f"整体风格质感：{style}。")
-    print(f"全局一致性约束：{negative}")
+    print(f"全局一致性约束：{consistency}")
 
 
 if __name__ == "__main__":

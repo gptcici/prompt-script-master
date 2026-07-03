@@ -26,7 +26,7 @@ Use weak bounce from wall, snow, desk, clothing, water, stone, or neon reflectio
 
 ## Red lines
 
-Do not write `全脸打亮`, `面部光线均匀`, or only `面光柔和`. Use positive body text; put residual failures such as flat face, dead-black shadows, overexposure, and plastic skin in a compact negative prompt if needed.
+Do not write `全脸打亮`, `面部光线均匀`, or only `面光柔和`. Use positive body text and describe the desired light structure directly instead of adding a separate denial field.
 
 ## Related
 

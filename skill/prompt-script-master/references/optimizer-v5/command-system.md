@@ -20,6 +20,6 @@
 
 - Prompt commands produce copy-ready output.
 - Rule-update commands modify documentation/rules, not previous prompts.
-- Seedance complete outputs separate positive main prompt and compact negative prompt.
+- Seedance complete outputs use the unified three-part prompt and keep stability requirements inside global consistency constraints.
 - Avoid generic style tags and model-incompatible syntax.
 - Use simple weights only when they strengthen crucial details.

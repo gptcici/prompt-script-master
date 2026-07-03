@@ -29,9 +29,6 @@
 ## 正文提示词
 [revised prompt]
 
-## 负面提示词
-[compact negative prompt]
-
 ## 自检发现
 - [issues found]
 

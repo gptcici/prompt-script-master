@@ -8,7 +8,7 @@ Always produce prompts in natural language suitable for OpenAI image-family. Do 
 
 If the user mentions another model:
 - Do not generate Midjourney parameters such as `--ar`, `--style`, `--v`, `--s`, or `--no`.
-- Do not generate Stable Diffusion / SDXL positive-negative prompt blocks.
+- Do not generate Stable Diffusion / SDXL two-column prompt blocks.
 - Do not generate ComfyUI node/module structures.
 - Do not generate Flux-specific prompt formats.
 - Convert the request into an OpenAI image-family natural-language prompt unless the user explicitly asks not to use this skill.
@@ -31,11 +31,11 @@ A good OpenAI image-family prompt should include:
 7. Real light sources and exposure behavior.
 8. Camera position, lens feeling, shot size, and aspect ratio when useful.
 9. Physical material behavior: skin, hair, fabric, props, set, smoke, reflections, crowd, dust, rain, or light.
-10. Positive anti-AI realism controls, written as desired qualities rather than negative prompt syntax.
+10. Positive anti-AI realism controls, written as desired qualities rather than denial syntax.
 
-## No default negative prompt
+## No separate denial field
 
-OpenAI image-family prompts should not include a separate negative prompt. Translate prevention into positive goals.
+OpenAI image-family prompts should not include a separate denial field. Translate prevention into positive goals.
 
 Examples:
 - Instead of `no plastic skin`, write `skin keeps natural pores, subtle uneven tone, and stage-light color spill`.

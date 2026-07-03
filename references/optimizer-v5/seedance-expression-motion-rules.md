@@ -20,6 +20,6 @@ Use one core emotion and at most one transition direction per shot. Use words su
 
 Mouth movement must include jaw stability, lip opening range, breath rhythm, and face/body continuity.
 
-## Negative prompt
+## Stability wording
 
-Put failures such as 表情扭曲、嘴部崩坏、面部僵硬、动作卡顿、肢体与表情脱节 in the negative field, not the main body.
+Keep expression and motion stability as positive, visible execution targets in the main prompt. Do not create a separate denial field.

@@ -19,7 +19,7 @@ REQUIRED_HINTS = {
     "action": ["动作", "抬", "走", "转", "推近", "握", "移动", "站", "看向"],
     "camera": ["镜头", "摄影机", "焦点", "焦段", "长焦", "广角", "推近", "跟拍"],
     "time": ["秒", "0-", "时间轴"],
-    "negative": ["禁止项", "不要", "避免"],
+    "consistency": ["一致性", "连续性", "锁定", "稳定"],
 }
 
 # 时间轴 9 项校验 — 对应 timeline-execution-rules.md 的分段格式
@@ -71,8 +71,8 @@ def check_prompt(text: str) -> tuple[list[str], list[str]]:
     if len(text.strip()) < 80:
         warnings.append("提示词过短，可能缺少可执行细节。")
 
-    if text.count("不要") > 14:
-        warnings.append("禁止项可能过多，建议合并重复项。")
+    if text.count("不要") > 8:
+        warnings.append("否定句偏多，建议改写为正向一致性约束。")
 
     lines = _timeline_lines(text)
     if lines:

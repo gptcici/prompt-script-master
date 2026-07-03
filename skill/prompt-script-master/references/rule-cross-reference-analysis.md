@@ -28,7 +28,7 @@
 2. "正面措辞/禁止否定词" 分布在 21 个文件中
 3. 光线四层公式两处结构相同 (real-lighting vs closeup-face-lighting)
 4. Library 调用规则结构在 5 个 library 文件中重复
-5. 负面提示词在 5 个文件末尾各自定义（内容不重复但结构重复）
+5. 旧版独立否定栏规则已移除，相关约束统一并入全局一致性约束
 6. 动态级别在 2 处平行存在 (dynamic-level-guide vs concert-performance-action-library)
 7. 任务路由触发条件 2 处不同粒度 (task-routing vs command-system)
 8. script-learning-index 功能空置
