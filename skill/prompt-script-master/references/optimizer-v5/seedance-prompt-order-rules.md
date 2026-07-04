@@ -204,166 +204,94 @@ When the user explicitly requests "一镜到底", skip the splitting question an
 
 Each segment must preserve the same character anchor and motion continuity without repeating the full identity description.
 
-## Weight syntax
+## 权重规范标准化
 
-Seedance 的 `(关键词:权重值)` 语法只对「有明确视觉对应、可被模型识别为具体画面特征」的元素生效。本质是提升该语义在图像特征空间的占比，让模型更倾向于生成这个元素。
+> `(关键词:权重值)` 语法只对「有明确视觉对应、可被模型识别为具体画面特征」的元素生效。抽象规则、逻辑指令、主观感受、否定描述类内容，加权完全无效，甚至引发画面异常。
 
-抽象规则、逻辑指令、主观感受、否定描述类内容，加权完全无效，甚至会挤占有效语义权重、引发画面异常。
+### 权重分层体系（S/A/B 三级，严格对应优先级）
 
-### 加权有效的元素分类
+按「人物核心 > 质感光影 > 环境氛围」分为三档，权重值随优先级递减，**环境类权重永远不得高于人物类权重**。
 
-#### 1. 人物外形类
+| 权重档位 | 数值范围 | 适用元素 | 使用频率 |
+|----------|---------|---------|---------|
+| **S 级**（核心必保） | 1.15 - 1.25 | 人物核心识别特征：标志性发饰、核心服装部件、五官关键特征 | 单段 1-2 个，全文不超 3 个 |
+| **A 级**（质感强化） | 1.1 - 1.15 | 关键面光关键词、核心材质质感、主风格定位 | 单段 1 个，全文不超 4 个 |
+| **B 级**（氛围补充） | 1.05 - 1.1 | 次要环境元素、细节氛围点缀 | 尽量不用，非必要不加 |
 
-所有可被视觉化的人物实体特征，加权后能明显提升该特征的还原度。它是解决人物细节丢失、配饰消失的核心手段。
+### 强制书写规范
 
-Valid examples:
+**仅给精准名词短语加权：** 禁止给长句子、整句话、逻辑描述加权，只给单个核心元素加。
 
-- 五官 / 脸型：`(鹅蛋脸:1.1)`, `(细长眉眼:1.1)`
-- 发型发饰：`(高盘发:1.15)`, `(金色花枝发冠:1.2)`, `(珍珠流苏:1.2)`, `(额前湿润碎发:1.1)`
-- 服装配饰：`(米白刺绣纱裙:1.15)`, `(深金腰封:1.2)`, `(半透明纱质披帛:1.1)`
+| 正确 | 错误 |
+|------|------|
+| `(金色花冠发饰:1.2)` | `(人物造型全程保持一致:1.3)` |
+| `(透明披帛:1.15)` | `(运镜稳定:1.2)` |
+| `(肩线发丝金边:1.1)` | `(叙事连续:1.3)` |
 
-Recommended weight range: `1.1-1.25`, maximum `1.3`. Higher values can cause feature distortion, shape errors, or cloth/accessory intersections.
+**放置位置跟随所属模块：**
 
-#### 2. 光影色调类
+- **人物特征加权** → 紧跟人物外形描述，和对应元素绑定
+- **光影质感加权** → 紧跟光影描述段落
+- **风格整体加权** → 放在全局风格收尾段
 
-色彩、光影方向、光影强度这类强视觉特征，加权后色调倾向和光影对比会明显增强。它是调氛围的高效手段。
+**权重上限红线：** 所有元素权重最高不超过 1.3，超过视为违规。
 
-Valid examples:
+**负面提示词加权规则：** 高频崩点可加 1.2-1.3 权重，如 `(手部畸形:1.3)`，仅放负面栏，正文禁止出现否定加权。
 
-- 整体色调：`(冷青灰调:1.2)`, `(暖金色暮色:1.15)`
-- 人物面光：`(发丝轮廓金边:1.2)`, `(下颌线明暗交界:1.1)`, `(鼻梁清冷高光:1.15)`
-- 环境光影：`(水面暖光倒影:1.2)`, `(雨雾暖光晕:1.15)`
+### 标准套用示例（对应山顶凉亭场景）
 
-Recommended weight range: `1.1-1.3`. Color tone can be slightly higher. Face-lighting and bone-lighting should usually stay at `1.1-1.2` to avoid broken lighting or unnatural facial separation.
+> ⚠️ **以下示例仅用于参考 S/A/B 三级权重的放置位置和数值用法，严禁直接照搬场景设定、人物身份、具体文本内容。** 实际生成时必须根据当前镜头的人物特征、光源类型和场景细节独立分配权重——哪些元素归 S 级（核心必保）、哪些归 A 级（质感强化）、哪些归 B 级（氛围补充）完全由当前场景决定，禁止套用此示例中的具体加权对象和数值。
 
-#### 3. 镜头光学与景深类
+```text
+16:9 横屏，10 秒，全程背后跟拍稳定前推。
+@Image1 仅作为人物强参考，锁定五官发型服装，不作为首帧。
+纤细身形，黑色长发高髻，(金色花冠珠链:1.2)，身着浅金白色轻纱古装，(透明披帛:1.15)，布料层次真实，清冷气质。
+山顶悬崖古亭，柱间悬挂轻薄纱幔，悬崖外云海与红金夕阳，山风持续吹动。
 
-景深、虚化、焦段质感这类光学视觉属性，加权后能强化虚实对比，比单独写“浅景深”更稳定。
+0-5s：中近景背后跟拍，镜头稳定前推，角色缓步走向亭口；发丝、衣袖、裙摆随风轻扬。
+夕阳侧逆光从亭柱缝隙切入，(肩线发丝金边:1.1)，发饰金属带细碎高光，亭内外明暗层次分明。
+浅景深跟随人物，前景纱幔虚化擦镜，远景云海天光柔和透出。
 
-Valid examples:
+(彩色写实电影摄影质感:1.2)，东方仙侠写实风格，真实布料重量，自然景深。
+全程人物造型稳定，光影逻辑自洽，运镜平稳。
+```
 
-- 虚化景深：`(背景重度散焦:1.25)`, `(三层景深层次:1.2)`, `(前景纱帘虚化:1.2)`
-- 镜头质感：`(50mm电影镜头质感:1.1)`, `(胶片颗粒感:1.2)`
+### 权重禁止项
 
-Recommended weight range: `1.15-1.3`. This is useful for countering the model's tendency toward full-depth sharpness.
-
-#### 4. 场景元素与动态道具类
-
-具体环境实体、天气动态、道具细节可以加权，但不要超过人物核心特征，避免背景或道具抢主体。
-
-Valid examples:
-
-- 天气动态：`(细密雨丝:1.2)`, `(低空薄雾:1.1)`, `(湖面雨涟漪:1.15)`
-- 场景道具：`(青石板湿滑反光:1.2)`, `(石灯笼暖光:1.15)`, `(油纸伞淡金纹样:1.2)`
-
-Recommended weight range: `1.1-1.2`. Scene element weights must stay below key character-feature weights unless the shot is a pure environment shot.
-
-#### 5. 风格质感类
-
-画面整体的风格、材质质感可以加权，用于强化风格统一，避免画风跳变。
-
-Valid examples:
-
-- 写实类：`(真实电影摄影质感:1.15)`, `(皮肤真实肌理:1.2)`
-- 艺术类：`(水墨淡彩质感:1.2)`, `(工笔古风质感:1.15)`
-
-Recommended weight range: `1.1-1.2`. Higher values can make the image over-stylized, distorted, or visually exaggerated.
+| # | 禁止项 | 原因 |
+|---|--------|------|
+| 1 | 给规则类、指令类、逻辑类描述加权 | 非视觉元素，加权无效且挤占语义 |
+| 2 | 给否定词、负面描述在正文加权 | 可能触发不想要的画面特征 |
+| 3 | 同维度重复加权 | 如同时给写实质感、电影质感、摄影质感各加 1.2 |
+| 4 | 环境元素权重高于人物核心元素权重 | 违反主次逻辑 |
+| 5 | 单段加权词超过 3 个，全文加权词超过 6 个 | 权重稀释，失去优先级意义 |
 
 ### 完全无效、绝对不要加权的元素
 
-#### 1. 规则类 / 指令类描述
+#### 规则类 / 指令类描述
 
-These are logical requirements for humans, not visual elements the model can directly render.
+- ❌ `(人物造型一致:1.3)` `(叙事连续:1.3)` `(运镜稳定:1.2)`
+- ❌ `(不抢人物焦点:1.3)` `(动作连贯:1.2)` `(必须保持一致:1.3)`
+- ✅ 替代方案：将规则转为具体可视特征加权，如用 `(金色花枝发冠:1.2)` 代替 `(造型一致:1.3)`
 
-Invalid examples:
+#### 抽象情绪 / 感受类
 
-- `(人物造型一致:1.3)`
-- `(叙事连续:1.3)`
-- `(运镜稳定:1.2)`
-- `(不抢人物焦点:1.3)`
-- `(上传人物造型图角色一致:1.3)`
-- `(人物面部与头饰一致:1.3)`
-- `(石桥雨中行走叙事连续:1.3)`
-- `(动作连贯:1.2)`
-- `(过肩视角稳定跟拍:1.3)`
-- `(运镜匀速极慢:1.2)`
-- `(必须保持一致:1.3)`
-- `(禁止跑偏:1.3)`
-- `(人物始终为画面视觉核心:1.2)`
+- ❌ `(氛围感拉满:1.3)` `(诗意感:1.2)` `(清冷气质:1.3)`
+- ✅ 替代方案：`(冷青灰调:1.2)` + `(低饱和画面:1.15)` 代替"清冷感"
 
-Replacement rule: convert the rule into concrete visible features before weighting. For example, to stabilize hair accessories, weight `(金色花枝发冠:1.2)` instead of `(造型一致:1.3)`.
+#### 否定描述
 
-#### 2. 抽象情绪 / 感受类
+- ❌ `(不要穿模:1.3)` `(不要崩坏:1.2)`
+- ✅ 替代方案：写正面可视目标，如 `手部结构自然清晰`、`五官比例稳定`
 
-Subjective feelings do not have a single stable visual representation and should not be weighted.
+#### 生成参数类
 
-Invalid examples:
+- ❌ `(参考强度0.7:1.2)` `(创意度0.4:1.2)` `(采样步数30:1.2)`
+- ✅ 面板参数不在提示词中生效，应在界面设置
 
-- `(氛围感拉满:1.3)`
-- `(诗意感:1.2)`
-- `(清冷气质:1.3)`
+### 加权核心原则（语序前置 > 加权）
 
-Replacement rule: translate the feeling into visible elements. For “清冷感”, use concrete visual features such as `(冷青灰调:1.2)` plus `(低饱和画面:1.15)`.
-
-#### 3. 否定描述
-
-Negative wording inside the main prompt is weak. Weighting negative phrases can even trigger the unwanted feature. Convert failure prevention into positive visible targets instead.
-
-Invalid examples in the main prompt:
-
-- `(不要穿模:1.3)`
-- `(不要崩坏:1.2)`
-
-Replacement rule: describe the desired stable result in positive language, for example `手部结构自然清晰`, `五官比例稳定`, `道具与手部接触自然`.
-
-#### 4. 生成参数类
-
-Panel/settings parameters do not work when written in prompt text.
-
-Invalid examples:
-
-- `(参考强度0.7:1.2)`
-- `(创意度0.4:1.2)`
-- `(采样步数30:1.2)`
-
-### 加权使用规则
-
-1. **语序前置 > 加权**  
-   Put core elements early. Front-loading brings stronger and more stable priority than adding `1.2`. Weighting is an enhancement, not a rescue mechanism.
-
-2. **只给精准关键词加权，不给长句子加权**  
-   Use `(金色花枝发冠:1.2)`, not a whole sentence in parentheses. Long weighted phrases cause semantic confusion.
-
-3. **权重范围控制在 `1.05-1.3`**  
-   - Light emphasis: `1.05-1.1`
-   - Medium emphasis: `1.1-1.2`
-   - Strong emphasis: `1.2-1.3`
-   - Values above `1.4` are not recommended and can cause deformation, color spill, or image breakdown.
-
-4. **权重层级必须符合主次逻辑，人物永远高于环境**  
-   Recommended hierarchy: character core features > character face/hair/clothing/accessory lighting > key carried prop > environmental lighting > scene elements > style/texture.  
-   When a human character is the subject, character visual weights must always be equal to or higher than environment weights. Do not make background rain `1.3` while the main hair accessory is only `1.1`, unless the shot is explicitly a pure environment or weather shot.
-
-5. **数量控制**
-   Use only the most important concrete visual stability points. Prefer `1-4` weighted phrases per prompt. Too many weights dilute priority.
-
-### Correct example for the user's ancient female character scene
-
-Correct:
-
-```text
-@Image1 仅作为女主形象参考，不作为首帧，不参考原图构图背景。
-东方古风女性，(高盘发:1.15)，(金色花枝发冠:1.2)，(珍珠流苏:1.2)，象牙白刺绣纱裙，(深金腰封:1.15)，清冷气质。
-(冷青灰暮色:1.2)，细雨朦胧，(背景湖面散焦虚化:1.2)，真实电影质感。
-```
-
-Incorrect:
-
-```text
-(人物造型一致:1.3)，(叙事连续:1.3)，(氛围感很强:1.2)，古风女子撑伞走在桥上。
-```
-
-For identity consistency, narrative continuity, camera movement, and behavioral instructions, use high-priority natural-language placement instead of numeric weights: place them early, state them clearly, and restate only when needed in timeline transitions.
+核心元素靠前放置的优先级 > 加 1.2 权重。加权是增强手段，不是补救手段。一个靠前未加权的 S 级元素，影响力高于一个靠后加 1.2 的同级元素。
 
 ## Output self-check
 

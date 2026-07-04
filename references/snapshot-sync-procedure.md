@@ -18,12 +18,13 @@
 SRC="D:/HermesAgent/skills/prompt-script-master"
 DST="$SRC/skill/prompt-script-master"
 
-# 2. 全量校验（排除项目级文件）
+# 2. 全量校验（排除项目级文件 + 已删除的 SKILL.md）
 diff -rq "$SRC/" "$DST/" \
   -x .git -x __pycache__ -x '*.bak' -x '.gitignore' -x '.github' \
+  -x SKILL.md \
   2>/dev/null
 
-# 3. Only in SRC = 快照缺失，立即补齐
+# 3. Only in SRC = 快照缺失（SKILL.md 除外），立即补齐
 #    Only in DST = 快照多余（罕见），核实后删除
 
 # 4. 再次 diff 确认零差异
@@ -38,12 +39,12 @@ diff -rq "$SRC/" "$DST/" \
 - `tests/`、`examples/`
 - `skill/`（快照目录本身）
 - `.git/`、`.gitignore`、`.github/`
+- ⚠️ **`SKILL.md`**：快照中的 SKILL.md 已被删除以消除与主 SKILL.md 的 `name` 字段歧义（两者同名会导致 `skill_view` 拒绝加载）。同步时**不得**将 SKILL.md 复制到快照目录。
 
 ### 快照目录必须包含的全部路径
 
 ```
 skill/prompt-script-master/
-├── SKILL.md
 ├── README.md
 ├── agents/
 │   └── openai.yaml
