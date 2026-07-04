@@ -1,4 +1,4 @@
-# 提示词脚本大师 (Prompt Script Master) V0.9.6
+# 提示词脚本大师 (Prompt Script Master) V0.9.71
 
 导演助理式的 AI 视频提示词生成 Skill，为 Seedance 2.0/2.1、OpenAI image-family 等模型提供结构化的中文视频脚本与提示词。
 
@@ -17,22 +17,13 @@ prompt-script-master/
 │   ├── restatement-stage-flow.md     # 复述阶段流程
 │   ├── project-type-rules.md         # 项目类型规则
 │   ├── video-rules.md                # 视频规则
-│   ├── quality-control.md            # 质量控制
-│   ├── reference-material-guide.md   # 参考素材指南
-│   ├── reference-isolation-rules.md  # 参考库隔离规则
-│   ├── templates.md                  # 模板库
-│   ├── examples-guide.md             # 案例库指南
-│   ├── script-learning-index.md      # 脚本学习索引
-│   ├── confirmation-gate.md          # 确认门控
-│   ├── dynamic-level-guide.md        # 动态级别指南
-│   ├── final-prompt-purity.md        # 最终提示词纯净性
-│   ├── shot-size-rules.md            # 景别规则
-│   ├── classic-shot-library.md       # 经典镜头库
-│   ├── concert-live-mv-rules.md      # 演唱会/Live MV规则
-│   ├── concert-performance-action-library.md  # 演唱会表演动作库
-│   ├── concert-shot-language-library.md       # 演唱会镜头语言库
-│   ├── lighting-emotion-library.md            # 灯光情绪库
-│   └── asset-library-guide.md                 # 素材库指南
+│   ├── quality-control.md            # 质量控制（含锚点光源一票否决）
+│   ├── timeline-execution-rules.md   # 时间轴执行规则（骨骼光照规范）
+│   ├── timeline-quality-gates.md     # 时间轴质量门（含锚点缺失不通过）
+│   ├── timeline-splitting-rule.md    # 时间轴拆分规则
+│   ├── anchor-light-source-rule.md   # 🆕 锚点光源规则（强制锚点 + 五维物理校验）
+│   ├── self-audit-procedure.md       # 🆕 技能自检流程
+│   ├── format-migration-v0.10-2026-07-04.md  # 🆕 v0.9.6→v0.10 格式迁移记录
 ├── references/optimizer-v5/         # Prompt Optimizer V5 视觉规则
 │   ├── task-routing.md               # 任务路由
 │   ├── output-templates.md           # 输出模板
@@ -96,13 +87,13 @@ prompt-script-master/
 - **AI 图像生成规则**：通用图像生成约束与质量门
 
 ### 🎥 Seedance 专项
-- **提示词语序规则**：权重顺序、语序优化
+- **提示词语序规则**：S/A/B 三级权重分层体系（S:1.15-1.25 / A:1.1-1.15 / B:1.05-1.1），全局红线 1.3
 - **表情动作联动**：表情 + 肢体同步描述
-- **面光规则**：骨骼光、面光、近景人脸灯光
-- **真实光影规则**：物理光源、阴影、光质
+- **面光规则**：锚点推导、骨骼光（鼻梁/眉骨/颧骨/下颌线等 7 点位）、分机位点位库、6 场景模板
+- **真实光影规则**：物理光源、阴影、光质，从锚点推导
 - **灯光场景库**：20+ 标准灯光场景
 - **国风灯光库**：中式奇幻特化灯光方案
-- **景深空间规则**：前景/中景/背景层次、虚化控制
+- **景深空间规则**：前景/中景/背景层次、虚化控制（遵循 S/A/B 权重体系）
 - **运镜转场规则**：推拉摇移跟升降、转场衔接
 - **工业化分镜套路库**：专业分镜动作模式
 - **情绪动作库**：情绪驱动的标准化动作描述
@@ -122,10 +113,12 @@ prompt-script-master/
 
 ### ✅ 质量保障
 - 内部 9 阶段自检流程
+- **锚点光源强制检测**：每条提示词必须确立唯一锚点光源（类型+方向+位置），缺失即一票否决
+- **五维物理校验**：方向一致性🔴 / 强度匹配🟡 / 色温匹配🟡 / 空间穿透🟡 / 夸张上限🟡
 - 时间轴质量门（7 项：景别 + 运镜 + 动作 + 衣发 + 人物光影 + 环境 + 景深）
 - 最终提示词纯净交付（不含解释、建议、选项）
 - 强制中断条件（冲突检测、信息缺失拦截）
-- 案例库引用验证
+- 参考库隔离验证
 
 ### 🎵 音乐 / 节奏专项
 - 音乐风格识别
