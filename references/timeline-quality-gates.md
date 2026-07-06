@@ -1,50 +1,38 @@
 # Timeline Quality Gates
 
-## 目标
+## Goal
 
-用于检查最终视频提示词的时间轴段落是否完整可执行。质量门控基于 7 项分段格式。
+Check whether final video prompts are compact, executable, and aligned with `seedance2-concise-execution-standard.md`.
 
-> **旧版 9 项格式已废弃。** 本文件以 7 项格式为唯一标准。
+## Required checks
 
-## 必须通过的检查
+A final video prompt should contain:
 
-时间轴每个段落必须包含以下维度：
+1. `【正文提示词】` and `【负面提示词】` sections.
+2. A total setup with duration, aspect ratio, subject, scene, style, and multi-shot/single-shot intent.
+3. Reference roles when reference images are used.
+4. One global physical light anchor: direction, color, rim/highlight logic, dark-side detail, weak bounce.
+5. One global wind or motion anchor when hair, fabric, leaves, clouds, curtains, smoke, water, or crowds move.
+6. A shot timeline with clear time ranges and cut points for multi-shot videos.
+7. Each shot paragraph should include camera, action, and environment/light/motion information.
+8. Character shots should pass `人物镜头强制覆盖规则`: visible action and expression/body linkage are present; mouth movement appears for speaking/singing/lip-sync; face lighting appears for medium close-up or closer shots; dynamic hair/wardrobe/accessory/environment materials use unified motion logic; reference identity is locked when references exist.
+9. Global consistency constraints.
+9. A compact categorized negative prompt.
 
-1. **景别**：明确景别或景别变化（远景/全景/中景/近景/特写）。
-2. **运镜状态**：运镜方式 + 方向 + 速度（固定/推/拉/摇/跟/环绕/升降）。
-3. **人物核心动作**：主体正在做什么，含面部表情和身体动作，不是模糊描述。
-4. **衣发纱幔动态**：风带动的发丝、衣袖、裙摆、披帛、珠链等服饰动态，集中描述。
-5. **人物光影**：必须从锚点光源推导（见 `anchor-light-source-rule.md`），按光源方向→骨骼高光点位（鼻梁/眉骨/颧骨/下颌线等）→暗部过渡→整体质感顺序书写。
-6. **环境细节**：场景光源变化、阴影、色温、背景道具变化、空间层次。
-7. **景深变化**：前后景虚实切换、焦点转移、景深推进或释放。
+## Failure signals
 
-**首段**额外要求：必须建立人物主体 + 关键外形特征（发型/服装/体型），后续段落不重复。
+- Deprecated three-block final format is used.
+- The main prompt mixes many negative instructions into positive text.
+- Prompt is extremely short and lacks anchors.
+- Prompt is very long and repeats the same instruction in many places.
+- Multi-shot intent is present but time ranges or shot cuts are unclear.
+- Light direction changes accidentally.
+- Wind direction changes accidentally.
+- Reference images are used without stating what each reference controls.
+- A character shot only describes beauty, clothing, or mood but lacks visible action.
+- A medium close-up or close-up character shot lacks face lighting / bone-light structure.
+- A singing, speaking, or lip-sync shot lacks mouth movement, jaw stability, lip range, or breath rhythm.
 
-## 不通过情况
+## Pass standard
 
-以下情况视为不通过：
-
-- **锚点光源缺失**：整个提示词未明确设定唯一锚点光源（类型+方向+位置三要素，见 `anchor-light-source-rule.md` §六）。
-- 时间轴段落缺少上述 7 项中任一项。
-- 核心动作是模糊描述（如"有情绪地站着"），缺少具体行为。
-- 分段之间动作跳跃不连续（穿帮）。
-- 后续段落重复首段已建立的角色外貌描述（冗余）。
-- 光线、场景、镜头信息只出现在独立板块中，没有进入每个时间轴段落。
-- 段落开头没有说明与前一段的衔接关系。
-- 把 7 项拆成逐行字段列表而非自然语言段落。
-- 出现导演创作思路、心理感受、逻辑说明等非视觉化抽象描述。
-- 衣发动态分散在多个位置重复描述而未聚合。
-- 正文出现"禁止""不要""避免""不得"等否定词（应放入负面提示词）。
-
-## 通过标准
-
-每个时间段读完后，模型应清楚知道：
-
-- 画面取多大景别、摄影机怎么运动；
-- 焦点锁定哪里、有无切换；
-- 主体做出什么动作、表情如何；
-- 衣发纱幔如何随风而动；
-- 光线从哪里来、怎么照亮角色；
-- 场景环境发生了什么变化；
-- 前后景的虚实关系如何变化；
-- 这一段的情绪功能（建立/推进/揭示/收束）。
+The result should be readable, copy-ready, compact enough for model attention, and specific enough to control subject, references, light, wind/motion, shot order, and consistency.
