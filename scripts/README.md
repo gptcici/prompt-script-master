@@ -20,4 +20,4 @@ python scripts/prompt_exporter.py path/to/prompt.txt --format md
 
 这些脚本不调用外部模型，只用于本地辅助生成、检查和导出提示词。
 
-后续可继续扩展 11 维评分、参考素材说明、全局一致性约束和完整 Skill 工作流。
+后续可继续扩展 11 维评分、参考素材说明、负面提示词生成和完整 Skill 工作流。

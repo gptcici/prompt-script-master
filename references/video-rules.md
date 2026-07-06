@@ -1,68 +1,32 @@
 # Video Rules
 
-## 默认模型
+## Final prompt format
 
-默认使用 Seedance 2.0 全能参考。用户没有主动指定其他模型时，不切换模型。
+Final video prompts use:
 
-## 时间轴
+```text
+【正文提示词】
+[positive prompt]
 
-单个镜头通常 6-15 秒。
+【负面提示词】
+[categorized negative prompt]
+```
 
-- 低于 6 秒：只适合简单动作或转场。
-- 超过 15 秒：建议拆分或压缩。
+Use `seedance2-concise-execution-standard.md` for the default execution standard.
 
-## 时间轴内执行信息
+## Timeline
 
-时间轴必须承载具体执行信息。每个时间段按 `timeline-execution-rules.md` 的 7 项格式写入，连成一整段自然语言：
+For multi-shot videos, write clear time ranges and shot numbers. Use natural-language shot paragraphs. Each shot should include camera, action, and environment/light/motion information.
 
-- 景别
-- 运镜状态
-- 人物核心动作
-- 衣发纱幔动态
-- 人物光影
-- 环境细节
-- 景深变化
+## Anchors
 
-> **旧版 9 项格式已废弃。**
+Always preserve the strongest anchors:
+- reference roles;
+- global light source;
+- global wind/motion field when relevant;
+- character/prop/architecture consistency;
+- shot order and cut points.
 
-## 镜头语言
+## Main prompt language
 
-镜头语言的主要执行位置是时间轴。全局摄影基调只补充：
-
-- 画幅；
-- 色彩；
-- 质感；
-- 总体摄影风格；
-- 整体稳定性或运动感。
-
-如果时间轴中没有逐段运镜、景别、焦点和光线变化，即使单独写了镜头语言，也视为不合格。
-
-## 空间关系
-
-根据项目类型写空间关系，并嵌入时间轴：
-
-- 人物近景：人物位置、焦点、背景虚化、光线。
-- 舞台镜头：人物、舞台、观众、灯光、主视觉关系。
-- 产品镜头：产品、台面、反光、材质、背景关系。
-- 宏大场景：空间层次、视觉中心、纵深关系。
-
-## 情绪表达
-
-抽象情绪必须转化为可见内容，并进入时间轴：
-
-- 人物动作与表情；
-- 时间轴内的镜头运动；
-- 光线和环境变化；
-- 空间关系。
-
-禁止将心理感受、导演创作思路、逻辑说明类抽象描述直接写入正文。
-
-## 参考素材优先级
-
-三档：
-
-1. 必须锁定参考
-2. 强参考
-3. 仅参考范围
-
-参考冲突时，不自动决定，必须询问用户。
+Use positive, visible, executable language. Put failures, prohibitions, and model-error prevention in the negative prompt.

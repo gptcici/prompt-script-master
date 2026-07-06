@@ -33,4 +33,3 @@ For Seedance, place lighting after subject/action/expression/body linkage or aft
 - Library: `seedance-lighting-scene-library.md` — 40 curated scene lighting presets
 - Library: `seedance-chinese-fantasy-lighting-library.md` — 40 gufeng/xianxia lighting presets
 - Rules: `seedance-closeup-face-lighting-rules.md` — face-specific lighting rules
-- Rules: `anchor-light-source-rule.md` — mandatory anchor light source and physical validation

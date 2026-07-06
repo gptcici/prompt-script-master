@@ -206,6 +206,10 @@
 ### ISR060 眼神特写收尾
 起始：中景人物看向镜头或远方。过渡：近景慢推聚焦眼部。结尾：眼部大特写定格。功能：悬念与情绪落点。
 
+## 配套负面提示词
+
+运镜卡顿、镜头抖动异常、画面跳变、运镜速度不均、人物穿模、景别跳变、透视错乱。
+
 ## Related
 
 - Rules: `seedance-camera-movement-transition-rules.md` — movement and transition rules

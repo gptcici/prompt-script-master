@@ -1,127 +1,36 @@
 # Golden Tests
 
-## 目标
+## Global pass standard
 
-Golden tests 用于真实上传 Skill 后验证输出是否符合预期。
+A final video prompt passes when it uses the current standard:
 
-这些测试不要求逐字一致，但要求输出结构、工作流判断和质量控制行为稳定。
+- `【正文提示词】` + `【负面提示词】`.
+- Medium length with strong anchors, not extreme short and not long repetitive director notes.
+- Reference roles are explicit.
+- One global physical light anchor exists.
+- One global wind/motion anchor exists when moving materials are present.
+- Multi-shot videos have clear time ranges and cut points.
+- Each shot compactly covers camera, action, and light/wind/depth/environment behavior.
+- Negative prompt is categorized and compact.
 
-## 全局硬性通过标准
+## Test 1: low-information singing request
 
-无论哪一条测试，只要生成最终视频提示词，就必须满足：
+User: 一个女孩在唱歌
 
-- 时间轴内每个时间段都包含 7 项：景别、运镜状态、人物核心动作、衣发纱幔动态、人物光影、环境细节、景深变化。
-- 不能只在单独的"镜头语言与摄影参数"段落里写运镜、景别或焦点。
-- 不能只在单独的"灯光、场景与动态"段落里写光线和场景。
-- "镜头目标、整体风格、情绪基调"应合并成整体目标与风格基调。
-- 如果时间轴段落缺少 7 项中任一项（景别/运镜/动作/衣发/人物光影/环境/景深），该测试视为不通过。
-- 正文不得出现"禁止""不要""避免""不得"类词汇（应分离到负面提示词）。
-- 正文不得出现导演创作思路、心理感受、逻辑说明等非视觉化抽象描述。
+Pass: ask confirmation questions first; do not directly output final prompt unless user authorizes direct mode.
 
-> **旧版 9 项格式和旧版三段式结构已废弃，不再作为通过标准。**
+## Test 2: Seedance multi-shot reference prompt
 
-## 测试 1：演唱会英雄镜头
+Pass: output a medium-length prompt with reference roles, global light anchor, global wind/motion anchor, 5-7 shot timeline, and categorized negative prompt.
 
-### 输入
+## Test 3: prompt audit
 
-```text
-帮我把这个想法写成 Seedance 2.0 全能参考视频提示词：一个女歌手站在演唱会舞台中央唱副歌，背后有巨大的时间环，灯光很震撼。
-```
+Pass: identify missing anchors, excessive length, unclear shot cuts, light-direction conflicts, wind-direction conflicts, and negative wording in the main prompt.
 
-### 预期行为
+## Test 4: product video
 
-- 可以直接生成，不必须追问。
-- 默认使用 Seedance 2.0 全能参考。
-- 输出应分为正文提示词和负面提示词两部分。
-- 应把"震撼"转化为可见画面：光线、舞台、观众灯海、时间环、镜头推进。
-- 时间轴每一段都必须按 7 项格式写明：景别、运镜状态、人物核心动作、衣发纱幔动态、人物光影、环境细节、景深变化。
+Pass: use the same structure but adapt anchors to product, material, reflection, camera, and scene consistency.
 
-### 通过标准
+## Test 5: storyboard / MV workflow
 
-输出不是抽象文案，而是可复制的视频提示词；所有具体执行信息已经嵌入时间轴。
-
-## 测试 2：首尾帧图生视频
-
-### 输入
-
-```text
-我有首帧和尾帧，想让人物从坐着自然走到窗边，请帮我写图生视频提示词。
-```
-
-### 预期行为
-
-- 不应直接硬写最终提示词。
-- 应先询问或确认首帧、尾帧、人物身份、空间关系和动作路径。
-- 应提醒首尾帧属于必须锁定参考。
-
-### 通过标准
-
-系统先确认关键素材关系，而不是直接生成。
-
-## 测试 3：错误提示词优化
-
-### 输入
-
-```text
-帮我检查这个提示词哪里不够好：高级电影感，震撼，燃，很好看。
-```
-
-### 预期行为
-
-- 应指出问题：主体不明确、场景缺失、动作缺失、时间轴缺失、时间轴内 7 项要素缺失。
-- 应给出优化方向。
-- 如果生成改写版，应补齐主体、场景、动作、时间轴 7 项要素（景别/运镜/动作/衣发/人物光影/环境/景深）和全局一致性约束，并分离负面提示词。
-
-### 通过标准
-
-系统能识别抽象提示词不可执行，并转换为结构化提示词；不能只补单独的镜头语言段落或光线场景段落。
-
-## 测试 4：产品广告镜头
-
-### 输入
-
-```text
-帮我写一个 8 秒的产品广告视频提示词，主体是一瓶黑色香水，背景是深色大理石台面，感觉要高级、冷感、有奢侈品广告质感。
-```
-
-### 预期行为
-
-- 可直接生成。
-- 应把"高级、冷感、奢侈品广告质感"转化为材质、光线、反光、镜头推进、背景虚化。
-- 时间轴应逐段按 7 项格式写明产品如何被拍摄：景别、运镜状态、核心动作、衣发动态（如适用）、光影、环境细节（台面反光、背景明暗）、景深变化。
-- 全局一致性约束应锁定产品比例、品牌标识位置、材质行为和反光逻辑。
-
-### 通过标准
-
-输出能保护产品形态和材质一致性，并且所有具体执行信息已经嵌入时间轴。
-
-## 测试 5：多镜头需求
-
-### 输入
-
-```text
-我要做一个 20 秒短片，开头是城市天台，中间人物奔跑，最后停在霓虹灯前回头看镜头。
-```
-
-### 预期行为
-
-- 应识别 20 秒更适合拆成多镜头或分镜组。
-- 应询问是否拆分，或按专业默认拆成 3 个分镜。
-- 输出应包含镜头之间的连续性要求。
-- 如果直接给分镜草案，每个分镜的时间轴都必须包含 7 项：景别、运镜状态、人物核心动作、衣发纱幔动态、人物光影、环境细节、景深变化。
-
-### 通过标准
-
-系统不应强行写成一个过长单镜头；如果给出分镜，每个分镜必须有完整时间轴。
-
-## 记录方式
-
-每次真实测试后记录：
-
-```text
-测试编号：
-是否通过：
-失败原因：
-需要修改的文件：
-备注：
-```
+Pass: respect confirmation workflow first; final output uses clear shot order, camera/action/environment per shot, and concise negative prompt.

@@ -16,7 +16,7 @@
 
 规则文件（`*-rules.md`）也应有 `## Related` 段指向其配套库，形成双向引用。
 
-## 已覆盖清单（15 个文件）
+## 已覆盖清单（13 个文件）
 
 ### 光影类（6 个）
 
@@ -45,12 +45,10 @@
 | `concert-performance-action-library.md` | → `dynamic-level-guide`, `seedance-expression-motion-rules`, `concert-shot-language-library` |
 | `seedance-emotion-action-library.md` | → `seedance-expression-motion-rules`, `seedance-prompt-order-rules`, `seedance-real-lighting-rules` |
 
-### 参考图/素材类（3 个）
+### 构图模式类（1 个）
 
 | 文件 | 引用 |
 |---|---|
-| `asset-library-guide.md` | → `reference-isolation-rules`, `reference-material-guide` |
-| `reference-image-library.md` | → `reference-fidelity-system`, `character-sheet-continuity-system` |
 | `composition-reference-library.md` | → `composition-space-structure`, `cinematic-camera-language` |
 
 ## 2026-07-03 已删除库文件
