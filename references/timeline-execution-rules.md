@@ -1,108 +1,51 @@
 # Timeline Execution Rules
 
-## 权威声明
+## Core principle
 
-本文件是时间轴分段格式的唯一权威来源。时间轴每段按固定顺序书写 7 项，连成一整段自然语言。
+Timeline content is still the execution body of a video prompt, but final Seedance prompts should use compact natural-language shot paragraphs instead of rigid field-by-field blocks unless the user asks for audit/debug formatting.
 
-> **旧版 9 项格式已废弃。** 禁止使用旧版格式。
+Authoritative final output standard: `references/seedance2-concise-execution-standard.md`.
 
-## 黄金 7 项格式
+## Multi-shot trigger
 
-```text
-景别 + 运镜状态 + 人物核心动作 + 衣发纱幔动态 + 人物光影 + 环境细节 + 景深变化
-```
+When the user asks for multiple angles, cuts, montage, inserts, close-ups, establishing shots, or any video over 5 seconds that is not explicitly single-shot, write a clear multi-shot timeline with time ranges.
 
-每项必须融合到同一段自然语言描述里，禁止拆成冒号字段列表。
+Use 5-7 shots for a typical 15-second video. Each shot should be 2-4 compact sentences.
 
-| 项目 | 说明 |
-|------|------|
-| 景别 | 远景/全景/中景/近景/特写，可写景别变化（如"中景 → 近景慢推"） |
-| 运镜状态 | 固定/推/拉/摇/跟/环绕/升降 + 方向 + 速度 |
-| 人物核心动作 | 主体具体在做什么，含面部表情和身体动作，禁止模糊描述 |
-| 衣发纱幔动态 | 风带动的发丝、衣袖、裙摆、披帛、珠链等服饰动态，集中描述 |
-| 人物光影 | 人物面光/骨骼光影：按「光源方向 → 骨骼高光点位 → 暗部过渡 → 整体质感」顺序书写；具体规范见 `references/optimizer-v5/seedance-closeup-face-lighting-rules.md` |
-| 环境细节 | 环境光源变化、阴影、色温、背景道具变化、空间层次 |
-| 景深变化 | 前后景虚实切换、焦点转移、景深推进或释放 |
+## Per-shot coverage
 
-## 首段规则
+Each shot paragraph should naturally cover:
 
-首段额外承担建立人物主体的职责，必须在段内说明：
+- shot size, camera position, movement, and focal behavior;
+- visible subject action and body / face / hand / material linkage;
+- when a shot contains a recognizable person, apply `人物镜头强制覆盖规则` to decide required action, expression/body linkage, mouth movement, face lighting, dynamic materials, and identity lock;
+- light behavior, wind or material dynamics, depth, and background motion;
+- for wind shots, visible response in the relevant layers: subject hair/costume, props/veils, and environment/clouds/mist;
+- transition or purpose of this shot when useful.
 
-- 人物关键外形特征（发型/服装/体型/标志性配饰）
-- 角色身份
+These are coverage requirements, not mandatory field labels in final copy-ready prompts.
 
-后续段落只写本段变化，不得重复首段已建立的角色外貌。
+## First and later shots
 
-## 后续段落衔接
+- First shot: establish subject, space, visual style, and the strongest reference anchors.
+- Later shots: focus on changes in camera, action, focus, light, wind, and spatial reveal. Avoid repeating the full character description in every shot.
 
-每段开头应在前 1-2 句内说明本段与上一段的空间/动作/景别关系，防止穿帮。
+## Quality signals
 
-后续段落只写变化：新增动作、渐变光影、转移焦点，不重复静态信息。
+A good timeline lets the video model understand:
 
-## 强制人物光影规则
+- where the camera is and how it moves;
+- what the subject does and how expression / body / hand / fabric details move, using `人物镜头强制覆盖规则` for character shots;
+- where the light comes from and how it affects the subject and environment;
+- how wind, fabric, smoke, water, cloud, crowd, or other moving materials behave;
+- how depth, foreground, midground, and background change;
+- how one shot leads into the next.
 
-> 完整规范见 `references/optimizer-v5/seedance-closeup-face-lighting-rules.md`，本节仅列核心执行要求。
+## Not acceptable
 
-### 触发条件（满足任一即强制写入）
-
-- 景别为中近景/近景/面部特写，面部占比 ≥ 1/3
-- 人物正脸/侧正脸/四分之三侧脸朝向镜头
-- 场景使用侧光/侧逆光/逆光/黄昏斜阳/轮廓光等非均匀平光
-- 风格要求真实电影质感/古风写实质感
-- 重点情绪镜头（静态凝视/慢动作细节）
-
-### 书写结构（必须严格遵循）
-
-```
-光源方向 → 骨骼高光点位 → 暗部过渡 → 整体质感
-```
-
-所有描述必须落到具体可视的骨骼/结构点位，禁止空泛形容词。
-
-### 标准骨骼点位库（单段选 3-4 个）
-
-| 类型 | 点位 |
-|------|------|
-| 高光点 | 鼻梁、眉骨、颧骨最高点、下颌线边缘、肩线、发梢边缘、唇峰、眼窝上缘 |
-| 暗部点 | 下颌角阴影、眼窝凹陷、鼻翼侧影、颈部阴影 |
-
-### 权重规则
-
-人物光影关键词的权重遵循 S/A/B 三级分层体系（见 `seedance-prompt-order-rules.md` 权重规范标准化章节）。光影类属于 A 级（1.1-1.15）或 B 级（1.05-1.1），具体由当前光影描述是否为该段核心质感决定。单段最多 1 个光影加权，全文光影加权总数受 S/A/B 频率上限约束。
-
-### 禁写条款
-
-- 禁止空泛描述："光影立体""五官精致""面部有氛围感"
-- 禁止光影方向与全局光源矛盾
-- 禁止过度夸张："强烈高光""明暗对比强烈"
-- 远景/全景/人物占比极小禁止写面部骨骼光影
-- 纯背影/后脑勺镜头禁止写面部光影（仅保留肩线/发丝轮廓光）
-
-## 禁止项
-
-- 时间轴段落缺少 7 项中任一项
-- 核心动作是模糊描述（如"有情绪地站着"）
-- 分段之间动作跳跃不连续
-- 后续段落重复首段已建立的角色外貌
-- 光影、场景、镜头信息不进入时间轴段落
-- 段落开头缺失与前一段的衔接关系
-- 把 7 项拆成逐行字段列表
-- 出现"禁止""不要""避免"等否定词（应放入负面提示词）
-- 出现导演创作思路、心理感受、逻辑说明等非视觉化抽象描述
-- 衣发动态、光影效果分散在全文多个位置重复描述
-
-## 范例
-
-> ⚠️ **以下范例仅用于参考 7 项格式的书写结构和衔接手法，严禁直接照搬场景内容、人物设定和光影描述。** 实际生成时必须根据用户的场景、机位、人物身份、光源条件独立创作，禁止复用范例中的任何具体文本。
-
-### 首段（建立人物）
-
-```text
-中景稳定前推，少女从山顶缓步走向亭子入口，肩颈放松、头部微抬望向亭内，步伐轻柔克制；山风从身后向外吹开衣袖与裙摆，发丝和珠链轻微晃动；夕阳侧逆光从侧后方打来，鼻梁、眉骨与肩线勾勒出淡金色柔和高光，下颌线与颈部形成自然明暗过渡；亭外岩面带淡金余晖，亭内木柱与围栏呈半明半暗深色层次；景深跟随人物移动，前景偶尔有纱幔虚化入镜。
-```
-
-### 中段（只写变化）
-
-```text
-中景转近景，镜头以步速稳定前推，角色穿入亭内，抬手用指尖轻触迎面飘来的薄纱，动作轻柔克制；纱幔被山风翻卷后回落，衣袖随动作向后展开；侧面夕阳从亭柱间穿入，颧骨与鼻梁带温润高光，另一侧面部融入柔和暗部，下颌线明暗交界清晰自然；亭内柱影落在地面与围栏上，纱幔飘动带动明暗闪动，悬崖外云海与红金晚霞从纱幔缝隙逐渐显露；景深从肩背自然转向手部与纱幔，末尾释放到远方云海。
-```
+- One long unbroken paragraph for complex multi-shot videos.
+- A shot that only says a mood but no visible action.
+- Lighting only described globally when shot-level light changes are important.
+- Wind or fabric motion without a single consistent direction.
+- Strong wind described only as a mood label without hair, fabric, veil, leaf, cloud, mist, or water response.
+- Repeating the full reference description in every shot.
