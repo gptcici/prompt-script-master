@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""
-prompt_checker.py
-
-A lightweight heuristic checker for AI video prompts.
-It reads a text file and prints a simple pass / needs-optimization report.
-This is not a replacement for the full quality-scoring workflow.
-"""
+"""Lightweight checker for current Prompt Script Master video prompts."""
 
 from __future__ import annotations
 
@@ -13,100 +7,123 @@ import argparse
 import re
 from pathlib import Path
 
-REQUIRED_HINTS = {
-    "subject": ["主体", "人物", "产品", "歌手", "车辆", "场景"],
-    "scene": ["场景", "空间", "舞台", "房间", "城市", "背景"],
-    "action": ["动作", "抬", "走", "转", "推近", "握", "移动", "站", "看向"],
-    "camera": ["镜头", "摄影机", "焦点", "焦段", "长焦", "广角", "推近", "跟拍"],
-    "time": ["秒", "0-", "时间轴"],
-    "consistency": ["一致性", "连续性", "锁定", "稳定"],
+SECTION_HINTS = {
+    "正文提示词": ["【正文提示词】"],
+    "负面提示词": ["【负面提示词】"],
+    "光源锚点": ["光源", "主光源", "夕阳", "侧逆光", "补光"],
+    "风向/柔体锚点": ["风向", "山风", "柔体", "发丝", "披帛", "纱幔", "吹向", "重量", "回弹"],
+    "镜头时间轴": ["镜头一", "0-", "秒"],
 }
 
-# 时间轴 7 项校验 — 对应 timeline-execution-rules.md 的分段格式
-SCALE_HINTS = ["景别", "远景", "全景", "中景", "近景", "特写", "大远景", "半身", "胸像", "全身"]
-CAMERA_HINTS = ["运镜", "固定", "推", "拉", "摇", "跟", "环绕", "升降", "平移", "微仰", "俯拍"]
-ACTION_HINTS = ["动作", "抬", "走", "转", "握", "移动", "站", "看向", "表情", "眼神", "眉", "嘴角", "头颈", "手指", "呼吸", "身体重心"]
-FABRIC_HINTS = ["发丝", "衣袖", "裙摆", "披帛", "珠链", "纱幔", "飘动", "吹动", "晃动", "衣发", "布料"]
-FACE_LIGHT_HINTS = ["锚点光源", "面光", "主光", "侧逆光", "顶光", "正面光", "侧方光", "骨骼", "鼻梁", "眉骨", "颧骨", "下颌线", "轮廓光", "明暗", "高光", "眼神光", "暗部", "光方向"]
-ENV_HINTS = ["环境", "场景", "背景", "道具", "空间", "细节", "层次", "阴影", "色温", "反光", "透光"]
-DEPTH_HINTS = ["景深", "虚化", "前景", "后景", "虚实", "浅景深", "深景深", "焦点"]
+NEGATIVE_CATEGORIES = ["人物类", "动作类", "风力类", "场景类", "风格类"]
+SHOT_RE = re.compile(r"\d+\s*[-—]\s*\d+\s*秒[^\n。]*")
+DEPRECATED_MARKERS = ["【全程" + "总定调】", "【时间轴" + "分段】", "【全局" + "收尾】"]
 
-# 7 项检查：每段都必须过关
-TIMELINE_CHECKS: list[tuple[str, list[str]]] = [
-    ("景别", SCALE_HINTS),
-    ("运镜", CAMERA_HINTS),
-    ("人物核心动作", ACTION_HINTS),
-    ("衣发纱幔动态", FABRIC_HINTS),
-    ("人物光影", FACE_LIGHT_HINTS),
-    ("环境细节", ENV_HINTS),
-    ("景深", DEPTH_HINTS),
-]
-
-NEGATIVE_CHECK = ["禁止", "不要", "避免", "不得"]
-
-VETO_PATTERNS = ["高级电影感，震撼，燃，很好看", "很高级，很震撼，很好看"]
-TIMELINE_LINE_RE = re.compile(r"(^|\n)\s*(?:\d+\s*[-—]\s*\d+\s*秒|\d+\s*秒\s*[-—])[^\n]*")
+CAMERA_HINTS = ["镜头", "机位", "运镜", "推", "拉", "横移", "环绕", "跟拍", "俯视", "特写", "远景", "中景", "近景"]
+ACTION_HINTS = ["动作", "走", "坐", "弹", "拨", "抬", "转", "看", "凝视", "回头", "停步", "伸手", "表情", "头部", "手", "身体", "肩", "衣", "发"]
+ENV_HINTS = ["光", "阴影", "风", "云", "景深", "虚化", "背景", "纱幔", "环境", "透光"]
+PERSON_HINTS = ["人物", "她", "他", "女孩", "少女", "女性", "男性", "歌手", "演员", "角色", "主角", "女主", "男主"]
+EXPRESSION_HINTS = ["眼神", "眉", "嘴", "唇", "表情", "面部", "肩", "手", "身体", "重心", "情绪"]
+MOUTH_TRIGGER_HINTS = ["唱", "演唱", "说话", "念白", "对口型", "口型", "台词", "喊", "哼唱"]
+MOUTH_DETAIL_HINTS = ["下颌", "嘴唇", "唇部", "开合", "呼吸", "口型", "气息"]
+CLOSEUP_HINTS = ["中近景", "近景", "特写", "面部特写", "情绪近景", "半身近景"]
+FACE_LIGHT_HINTS = ["鼻梁", "眼窝", "颧骨", "下颌", "眼神光", "瞳孔", "皮肤", "面部光影", "面光", "骨骼"]
+WIND_OBJECT_HINTS = ["发丝", "头发", "碎发", "披帛", "袖口", "裙摆", "衣摆", "丝带", "珠链", "流苏", "纱幔", "竹叶", "云雾", "云海", "水面", "烟", "雨", "雪"]
+WIND_PHYSICS_HINTS = ["风向", "吹向", "重量", "惯性", "延迟", "回弹", "下坠", "鼓起", "拉伸", "翻卷", "速度差"]
+FAILURE_WORDS_IN_MAIN = ["不要", "避免", "不能", "不得", "不允许", "无卡顿", "不会"]
 
 
-def _timeline_lines(text: str) -> list[str]:
-    return [match.group(0).strip() for match in TIMELINE_LINE_RE.finditer(text)]
-
-
-def _missing_hint(lines: list[str], hints: list[str]) -> bool:
-    return any(not any(hint in line for hint in hints) for line in lines)
+def contains_any(text: str, hints: list[str]) -> bool:
+    return any(h in text for h in hints)
 
 
 def check_prompt(text: str) -> tuple[list[str], list[str]]:
     missing: list[str] = []
     warnings: list[str] = []
 
-    for key, hints in REQUIRED_HINTS.items():
-        if not any(hint in text for hint in hints):
-            missing.append(key)
+    for marker in DEPRECATED_MARKERS:
+        if marker in text:
+            warnings.append(f"检测到已废弃输出模板：{marker}")
 
-    for pattern in VETO_PATTERNS:
-        if pattern in text:
-            warnings.append("提示词过于抽象，缺少主体、场景、动作和镜头语言。")
+    for label, hints in SECTION_HINTS.items():
+        if not contains_any(text, hints):
+            missing.append(label)
 
-    if len(text.strip()) < 80:
-        warnings.append("提示词过短，可能缺少可执行细节。")
+    if "【负面提示词】" in text:
+        neg = text.split("【负面提示词】", 1)[1]
+        for cat in NEGATIVE_CATEGORIES:
+            if cat not in neg:
+                warnings.append(f"负面提示词缺少分类：{cat}")
+        if "风力类" in neg and not contains_any(neg, ["风向", "发丝", "布料", "纱幔", "云层", "同速", "重量"]):
+            warnings.append("风力类负面提示词较弱，建议加入风向混乱、发丝不动、布料无重量、同速漂浮等故障词。")
 
-    if text.count("不要") > 8:
-        warnings.append("否定句偏多，建议改写为正向一致性约束。")
+    main = text.split("【负面提示词】", 1)[0]
+    if sum(main.count(w) for w in FAILURE_WORDS_IN_MAIN) > 2:
+        warnings.append("正文提示词含较多负面/故障措辞，建议移入负面提示词。")
 
-    lines = _timeline_lines(text)
-    if lines:
-        for label, hints in TIMELINE_CHECKS:
-            if _missing_hint(lines, hints):
-                warnings.append(f"时间轴中存在未写入{label}的时间段。")
-    elif "时间轴" in text:
-        warnings.append("检测到时间轴标题，但没有识别到明确的秒数段落。")
+    has_person = contains_any(main, PERSON_HINTS)
+    if has_person:
+        if not contains_any(main, ACTION_HINTS):
+            warnings.append("检测到人物主体，但缺少人物核心动作。")
+        if not contains_any(main, EXPRESSION_HINTS):
+            warnings.append("检测到人物主体，但缺少表情与肢体联动。")
+        if contains_any(main, MOUTH_TRIGGER_HINTS) and not contains_any(main, MOUTH_DETAIL_HINTS):
+            warnings.append("检测到说话/唱歌/对口型，但缺少下颌稳定、嘴唇开合、呼吸节奏等口型细节。")
+        if contains_any(main, CLOSEUP_HINTS) and not contains_any(main, FACE_LIGHT_HINTS):
+            warnings.append("检测到人物中近景/近景/特写，但缺少鼻梁、眼窝、颧骨、下颌、眼神光等人物面部光影。")
+
+    if contains_any(main, WIND_OBJECT_HINTS):
+        if not contains_any(main, WIND_PHYSICS_HINTS):
+            warnings.append("检测到动态材质，但缺少风向/重量/惯性/回弹/速度差等柔体动力学锚点。")
+        if "风向" in main and "统一" not in main:
+            warnings.append("检测到风向描述，但未明确风向全程统一。")
+
+    shots = SHOT_RE.findall(text)
+    if shots:
+        for shot in shots:
+            idx = text.find(shot)
+            window = text[idx: idx + 380]
+            if not contains_any(window, CAMERA_HINTS):
+                warnings.append(f"{shot} 附近缺少机位/运镜信息。")
+            if contains_any(window, PERSON_HINTS):
+                if not contains_any(window, ACTION_HINTS):
+                    warnings.append(f"{shot} 附近有人物但缺少人物动作。")
+                if not contains_any(window, EXPRESSION_HINTS):
+                    warnings.append(f"{shot} 附近有人物但缺少表情/肢体联动。")
+            elif not contains_any(window, ACTION_HINTS):
+                warnings.append(f"{shot} 附近缺少主体动作/肢体信息。")
+            if not contains_any(window, ENV_HINTS):
+                warnings.append(f"{shot} 附近缺少光影/风/环境信息。")
+    elif "镜头" in text:
+        warnings.append("检测到镜头描述，但没有识别到明确秒数段落。")
+
+    main_len = len(main.strip())
+    if main_len < 500:
+        warnings.append("正文偏短，复杂视频可能缺少控制锚点。")
+    if main_len > 2600:
+        warnings.append("正文偏长，建议压缩重复说明，保留强锚点和镜头化时间轴。")
 
     return missing, warnings
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Check an AI video prompt text file.")
+    parser = argparse.ArgumentParser(description="Check a Prompt Script Master video prompt text file.")
     parser.add_argument("file", help="Path to prompt text file")
     args = parser.parse_args()
 
-    path = Path(args.file)
-    text = path.read_text(encoding="utf-8")
+    text = Path(args.file).read_text(encoding="utf-8")
     missing, warnings = check_prompt(text)
 
     print("提示词检查结果")
     print("=" * 20)
-
     if not missing and not warnings:
-        print("通过：未发现明显结构问题。")
+        print("通过：符合当前中等精简 + 强锚点 + 镜头化时间轴 + 人物镜头强制覆盖 + 风向/柔体动力学标准。")
         return
-
     print("需要优化")
     if missing:
-        print("\n缺少可能的关键模块：")
+        print("\n缺少关键模块：")
         for item in missing:
             print(f"- {item}")
-
     if warnings:
         print("\n提醒：")
         for item in warnings:
