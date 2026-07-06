@@ -1,42 +1,40 @@
 #!/usr/bin/env python3
-"""Lightweight prompt wizard for Prompt Script Master — v7 (2-part + 7-field timeline)."""
+"""Minimal wizard for the current Prompt Script Master video prompt format."""
 
 from __future__ import annotations
 
 
-def ask(label: str, default: str = "") -> str:
-    suffix = f" [{default}]" if default else ""
-    value = input(f"{label}{suffix}: ").strip()
+def ask(label: str, default: str) -> str:
+    value = input(f"{label} [{default}]: ").strip()
     return value or default
 
 
 def main() -> None:
-    print("提示词脚本大师 - Skill 内置简易向导 (v7)")
-    subject = ask("核心主体", "一名人物")
-    scene = ask("场景", "明确空间中")
-    style = ask("整体风格", "彩色写实电影摄影质感")
-    duration = ask("时长", "8 秒")
-    action = ask("主要动作", "主体完成可见动作并形成稳定 ending pose")
-    camera = ask("运镜状态", "稳定前推，运镜柔和克制")
-    consistency = ask("全局一致性约束", "全程人物造型稳定、空间连贯、运镜平稳")
+    duration = ask("时长", "15秒")
+    aspect = ask("画幅", "16:9")
+    subject = ask("主体/动作", "东方少女坐在亭中弹奏古筝，指尖拨弦，眼神低垂后缓慢抬起")
+    style = ask("风格", "东方仙侠写实电影质感，空灵庄严")
+    refs = ask("参考图职责", "Mixed 1/2 锁定人物；Mixed 3 锁定服装；Mixed 4 锁定亭子结构")
+    light = ask("全局光源锚点", "唯一主光源来自画面右侧低角度夕阳，暖金侧逆光，云海弱补光")
+    wind = ask(
+        "全局风向 / 柔体动力学锚点",
+        "中等偏强山风从右前方吹向左后方；发丝和丝带响应最快，轻纱披帛与纱幔鼓起、拉伸、翻卷和回落，内层衣身移动更慢，云雾同向缓慢流动",
+    )
 
     print("\n【正文提示词】")
-    print(f"{16}:9 横屏，{duration}，全程{camera}。")
-    print(f"@Image1 仅作为人物强参考，锁定五官、发型、发饰、服装款式与气质，不作为首帧，不参考原图构图背景，全程为同一位{subject.strip('一名')}，不生成通用AI模特脸。")
-    print(f"[人物核心外形特征：{subject}]。")
-    print(f"{scene}。")
-    print("")
-    print("[时间轴1]：[景别 + 运镜状态]，[人物核心动作]，[衣发纱幔动态]，[人物光影]，[环境细节]，[景深变化]。首段建立人物主体和关键外形特征。")
-    print("")
-    print(f"({style}:1.2)，真实电影摄影感，写实风格。")
-    print(f"{consistency}。")
-    print("")
-    print("【负面提示词】")
-    print("人物类：脸部变形、五官漂移、发型错乱、发饰丢失、服装变色")
-    print("动作类：肢体错乱、手部畸形、手指粘连、动作僵硬")
-    print("场景类：空间跳跃错位、道具错位")
-    print("风格类：过度磨皮、过度CG感、卡通插画感、画面模糊低质")
-    print("技术类：运镜抖动、景别突变、画幅错误")
+    print(f"{duration}，{aspect}，{style}。{subject}，由多个镜头切换组成。")
+    print(f"\n参考图职责：{refs}。")
+    print(f"\n全局光源锚点：{light}。")
+    print(f"\n全局风向 / 柔体动力学锚点：{wind}。")
+    print("\n0-2秒，镜头一：[景别/机位/运镜]。[主体动作/表情/身体或材质联动]。[光影/风/景深/环境变化]。")
+    print("2-4秒，镜头二：[同上，每镜头2-4句]。")
+    print("\n全局一致性：[角色、服装、道具、建筑、光源、风向和空间关系保持一致]。")
+    print("\n【负面提示词】")
+    print("人物类：...")
+    print("动作类：表情僵硬、嘴部崩坏、口型与情绪脱节、动作卡顿、肢体与表情脱节")
+    print("风力类：风向混乱、发丝不动、布料无重量感、纱幔无规律乱飞、所有物体同速漂浮")
+    print("场景类：...")
+    print("风格类：...")
 
 
 if __name__ == "__main__":
