@@ -71,6 +71,10 @@ Avoid these unless the user explicitly asks:
 - named film/director/cinematographer style references unless the user asks for that exact style; when used, always pair the anchor with concrete visual traits
 - empty style filler such as `高级感`, `氛围感`, `质感好`, `大片感`, or `电影感` without visible color, light, camera, composition, or material details
 
+## Character-shot trigger
+
+For any OpenAI image-family prompt containing a recognizable person, apply the top-level `人物镜头强制覆盖规则`: action and expression/body linkage are required; mouth movement is required for speaking/singing/lip-sync; face lighting is required for medium close-up or closer shots; dynamic hair/wardrobe/accessory/environment materials require unified physical motion; reference identity must be locked when references exist. Keep the final image prompt as natural-language paragraphs and do not add video timecodes unless the user asks for a keyframe sequence.
+
 ## Prompt structure
 
 Use this order when writing a full prompt:
