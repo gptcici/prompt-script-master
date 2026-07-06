@@ -5,11 +5,13 @@ description: use this skill when the user wants to create, review, optimize, or 
 
 # 提示词脚本大师
 
+## 当前版本：V0.9.74
+
+默认最终视频提示词标准为“中等精简 + 强锚点 + 镜头化时间轴”。所有最终视频提示词使用【正文提示词】+【负面提示词】，旧的三板块视频模板不再作为输出格式。涉及人物主体时，必须先执行“人物镜头强制覆盖规则”；涉及风、发丝、布料、纱幔、竹叶、云雾、水面等动态材质时，必须通过该人物规则判断触发，并使用“全局风向 / 柔体动力学锚点”。
+
 ## 参考库隔离最高规则
 
-所有 references/ 中的拆解、动作库、分镜库、灯光库和案例库，以及各规则文件中的所有示例（⚠️ 标记或代码块中的文本），**只能作为内部导演方法参考，严禁直接照搬到生成的提示词中**。最终生成脚本或提示词不得出现参考库里的真实人物、艺人、视频名、文件名、原始时间戳、歌词、字幕、水印、logo、专属桥段、具体道具组合或来源痕迹。规则中的模板仅参考结构和格式，实际内容必须根据用户的场景、人物、光源独立创作。
-
-**锚点光源强制规则**：每条提示词必须确立唯一锚点光源（类型+方向+位置三要素齐全），所有人物面光、环境光影、阴影、轮廓光必须从该锚点光源推导，禁止出现第二个不相关的主光源。具体规则见 `references/anchor-light-source-rule.md`。
+所有 references/ 中的拆解、动作库、分镜库、灯光库和案例库，只能作为内部导演方法参考。最终生成脚本或提示词中不得出现参考库里的真实人物、艺人、视频名、文件名、原始时间戳、歌词、字幕、水印、logo、专属桥段、具体道具组合或来源痕迹。
 
 使用参考库时必须先抽象为：动作逻辑、镜头结构、音乐节奏、光影情绪、空间调度和剪辑方法，再用用户当前项目重新表达。
 
@@ -93,7 +95,7 @@ Seedance 语序、权重、表情、光影、景深和运镜：`optimizer-v5/see
 - 最终提示词
 - 完整时间轴
 - 可直接复制给视频模型的生成指令
-- 同时包含【正文提示词】【时间轴分段】【负面提示词】的成品结构
+- 同时包含【生成规格】【时间轴】【禁止项】的成品结构
 
 复述确认阶段只能输出理解、判断、建议、候选方向和问题。
 
@@ -151,90 +153,73 @@ Seedance 语序、权重、表情、光影、景深和运镜：`optimizer-v5/see
 
 ## DIRECT_MODE 输出规则
 
-当用户明确授权快捷生成时，直接输出最终提示词。最终提示词必须纯净，只包含模型执行内容，不包含解释、复述、确认问题、选择项、"我建议""你可以""是否采用"、动作库名称或经典镜头库名称。
+当用户明确授权快捷生成时，直接输出最终提示词。最终提示词必须纯净，只包含模型执行内容，不包含解释、复述、确认问题、选择项、“我建议”“你可以”“是否采用”、动作库名称或经典镜头库名称。
 
-快捷生成时允许自动补齐时长、画幅、场景、灯光、镜头、动作、情绪等非核心专业参数。
-
-最终提示词必须分为「正文提示词」和「负面提示词」两部分输出。正文只写正向描述，不得出现"禁止、不要、避免、不得"类词汇；所有禁止项统一放在负面提示词中。
+快捷生成时允许自动补齐时长、画幅、场景、灯光、镜头、动作、情绪、禁止项等非核心专业参数。
 
 ## 最终提示词结构
 
-最终提示词统一分为「正文提示词」和「负面提示词」两部分（详见 `templates/video-prompt-template.md`）。单镜头和多镜头使用同一结构，唯一区别是时间轴分段数量：单镜头 = 1 段，多镜头 = n 段。
-
-> **旧版三段式（全程总定调/时间轴分段/全局收尾）已废弃。** 禁止使用旧版结构。
-
-### 正文提示词语序权重（黄金优先级，绝对不能乱）
-
-按权重从高到低排列，顺序固定：
-
-1. **第一梯队（开头最高权重）**：视频基础规格 + 全程运镜总基调 + 参考图标准化指令（@Image1 格式） + 人物核心外形特征
-2. **第二梯队**：整体场景总设定（一句话概括大环境与核心元素）
-3. **第三梯队**：时间轴分段叙事
-4. **第四梯队（末尾最低权重）**：整体风格质感 + 正向全局一致性约束
-
-**最强格式规则，必须执行**：第一梯队中，参考图指令之后必须立刻写人物核心外形特征，不得被环境、氛围、道具、色调或情绪描述隔开。人物权重永远高于环境。
-
-### 无效语义清理规则（必须执行）
-
-最终提示词中不得出现以下非视觉化描述，必须全部转化为可被画面呈现的具象内容：
-
-- **导演创作思路类**（如"延续上一镜头的空间关系""形成天地开阔的推进感"）→ 只保留景别、运镜、焦点变化等具象结果
-- **心理感受类**（如"像被云光吸引""有进入圣地般的仪式感"）→ 转化为"头部微抬""步伐轻柔克制"等可视动作
-- **逻辑说明类**（如"体现角色从封闭到开阔的心境变化"）→ 只保留景深释放、空间展开等视觉变化
-
-### 同类信息聚合规则（必须执行）
-
-相同维度的内容必须集中描述，禁止分散在全文重复提及：
-
-- **人物衣发动态**：统一跟在人物动作之后，集中描述风带动的发丝、衣袖、裙摆、披帛、珠链等
-- **光影效果**：统一放在动作之后、环境之前，先人物面光/轮廓光，再环境光影
-- **景深变化**：统一放在每段末尾，明确说明焦点位置和虚实变化
-
-### 参考图标准化指令
-
-人物参考图必须使用固定 @Image 格式，放在人物核心外形特征之前：
+最终视频提示词默认采用“中等精简 + 强锚点 + 镜头化时间轴”标准，详见 `references/seedance2-concise-execution-standard.md`、`references/seedance-wind-softbody-standard.md` 和 `templates/video-prompt-template.md`。所有最终视频提示词默认输出：
 
 ```text
-@Image1 仅作为人物强参考，锁定五官、发型、发饰、服装款式与[气质]，不作为首帧，不参考原图构图背景，全程为同一位[角色身份]，不生成通用AI模特脸。
+【正文提示词】
+总设定 + 参考图职责 + 全局光源锚点 + 全局风向 / 柔体动力学锚点 + 镜头时间轴 + 全局一致性
+
+【负面提示词】
+人物类 + 动作类 + 风力类 + 场景类 + 风格类
 ```
 
-禁止使用"上传定妆图作为参考""锁定参考图角色"等模糊描述。
 
-### 时间轴分段格式
+## 人物镜头强制覆盖规则
 
-`【时间轴分段】` 中，每一段按固定顺序书写以下 7 项，连成一整段自然语言，禁止拆成冒号字段列表：
+本规则是所有人物镜头的唯一总规则。最终视频提示词或图片提示词中只要出现可识别人物主体，就必须先由本规则判断触发项；其他 references 文件只作为具体写法的子实现标准，不再单独定义顶层强制项。
 
-```text
-景别 + 运镜状态 + 人物核心动作 + 衣发纱幔动态 + 人物光影 + 环境细节 + 景深变化
-```
+触发判断顺序：普通人物镜头；人物中近景 / 近景 / 特写 / 面部特写；说话 / 唱歌 / 念白 / 对口型；存在发丝、衣物、饰品或环境动态材质；存在人物参考图、定妆图、角色模板、三视图、多视角、首帧或尾帧。不同触发状态只调用对应模块，不得为了格式完整硬塞无效描述。
 
-首段需要建立人物主体和关键外形特征；后续段落只写本段变化，保持人物连续性，不重复首段已经建立的角色外貌。
+### A. 人物动作：人物镜头必选
 
-人物光影必须从锚点光源推导（见 `anchor-light-source-rule.md`），按光源方向→骨骼高光点位（鼻梁/眉骨/颧骨/下颌线等）→暗部过渡→整体质感顺序书写。触发条件、分机位点位库、禁写条款见 `seedance-closeup-face-lighting-rules.md`。
+只要镜头主体是人物，必须写清人物正在做什么，不得只写身份、颜值、服装、站位或氛围。动作至少包含一个可见动作点，如转身、回头、抬眼、走动、停步、伸手、扶袖、抚发、整理发簪、握住衣摆、抬手、俯身、拔剑、唱歌、舞蹈、凝视、后退或靠近镜头。静态人物镜头也必须有微动作，如呼吸带动肩颈轻微起伏、眼神缓慢移动、指尖轻收、身体重心轻微转移。
 
-### 权重标记规则
+### B. 表情与肢体联动：人物镜头必选
 
-权重标记遵循 S/A/B 三级分层体系，详见 `seedance-prompt-order-rules.md` 权重规范标准化章节：
+只要镜头主体是人物，必须写出表情与肢体联动，不得只写“开心、悲伤、冷艳、害羞、愤怒、紧张、深情”等抽象情绪词。表演应覆盖整体情绪基调、眼神动作、眉部动作、嘴部状态、面部肌肉状态、头颈肩手或身体重心联动、情绪变化节奏。写法示例：她停在镜头前，情绪克制而低落，眼神先短暂垂向地面再缓慢抬起，眉心轻轻收紧，嘴唇微张后慢慢合上，肩膀自然下沉，右手无意识收紧衣袖。
 
-- S 级（1.15-1.25）：核心人物面部特征、身份标识物，单段最多 1-2 个，全文 ≤ 3 个
-- A 级（1.1-1.15）：材质质感、关键光影效果、核心服饰细节，单段最多 1 个，全文 ≤ 4 个
-- B 级（1.05-1.1）：环境氛围、非核心装饰，尽量不用
-- 全局红线：所有权重 ≤ 1.3
-- 禁止：给人/给负面描述加权、同一个词重复加权、环境权重大于人物权重
+### C. 口型与说唱表演：条件必选
 
-### 负面提示词
+如果人物在说话、唱歌、念白、对口型、轻声哼唱、喊叫、喘息或有明显嘴部表演，必须加入口型与嘴部动作描述，至少覆盖下颌稳定、嘴唇开合幅度、呼吸节奏、嘴部动作与情绪表情连续性、脸部与身体动作一致性。没有说话、唱歌、念白或对口型时，不强制写口型模块。
 
-所有禁止项、负面规避描述必须从正文完全剥离，统一放到独立的「负面提示词」模块。正文只写正向描述，绝对不出现"禁止、不要、避免、不得"类词汇。
+### D. 人物面部光影：中近景 / 近景 / 特写条件必选
 
-负面提示词按类别罗列：人物类（脸部变形、五官漂移、发型错乱…）、动作类（肢体错乱、手部畸形…）、场景类（空间跳跃错位、纱幔无重力漂浮…）、风格类（过度磨皮、过度CG感、卡通插画感…）、技术类（运镜抖动、景别突变…）。
+如果镜头是人物中近景、近景、特写、面部特写、情绪近景，或观众会明显感知脸部细节，必须加入人物面部光影模块。面部光影至少包含主光方向、光质与色温、鼻梁高光、眼窝明暗、颧骨亮面、下颌线阴影边界、眼神光 / 瞳孔反光、皮肤微细节、环境弱反光。不得只写“面光柔和”“电影感光影”“全脸打亮”“面部光线均匀”“真实光影”“高级面光”。远景、背影、剪影、脸部不可见或脸部占比极小的镜头，不强制写面部光影模块。
 
-### 时间轴规则权威来源声明
+### E. 衣物、饰品与环境动态：条件必选
 
-`references/timeline-execution-rules.md` 和 `references/timeline-quality-gates.md` 是时间轴分段规则的唯一权威来源。时间轴每段必含上述 7 项，格式以本文件为准。
+如果画面中存在发丝、碎发、长发、披帛、轻纱、袖口、衣摆、裙摆、丝带、珠链、流苏、耳坠、发簪垂饰、纱幔、帘幕、旗帜、帐幔、竹叶、树叶、草、花瓣、灰尘、雪、雨、云雾、烟、香火、水面、涟漪或浪花，必须加入动态描述。动态必须服从统一的全局风向或动作惯性，不得让头发、衣物、饰品和环境朝冲突方向运动。必须区分材质重量和响应速度：发丝、碎发、细丝带响应最快；轻纱、披帛、宽袖可鼓起、拉伸、翻卷、回落；厚重衣身和外袍主体响应较慢；珠链、流苏、发饰小幅延迟摆动；云雾、水面、远景环境变化更慢；所有动态都应具有延迟、惯性、回弹和重力。
 
-> **旧版 9 项格式（本段景别 + 本段运镜状态 + 焦点变化 + 核心动作 + 表情肢体联动 + 人物面光/骨骼光影 + 环境光影变化 + 环境细节补充 + 本段景深变化）已废弃。** 禁止使用旧版 9 项格式。
+如果画面没有明显可动态材质，也没有风、动作惯性或环境流动，不强制加入风动模块。
 
-OpenAI image-family / GPT-image / image2 图片提示词默认输出自然语言段落，不输出 Midjourney、Stable Diffusion、ComfyUI、Flux 或 tag-soup 格式，也不默认拆成正向栏与否定栏。图片提示词必须包含参考图角色、主体身份、场景动作、真实光源、镜头构图、材质行为、摄影真实感和一致性要求。
+### F. 人物一致性：参考图条件必选
+
+如果用户提供人物参考图、定妆图、角色模板、三视图、多视角、首帧或尾帧，必须优先锁定人物身份，包括脸型比例、五官气质、眼神感觉、鼻唇印象、发型长度与层次、发色细节、年龄感、妆容、身体比例和身份气质。不得为了风格化、美化、氛围感、古风感、电影感或舞台感，把人物替换成另一个通用 AI 模特脸。
+
+### G. 非触发模块不得硬写
+
+人物镜头规则是条件触发，不是无条件堆叠。远景背影人物不强制写鼻梁高光、眼神光或口型；无说话 / 无唱歌 / 无对口型不强制写口型；无风、无明显动态材质、无环境流动不强制写风动；极短过渡镜头只保留最关键的人物动作和镜头目的；群像远景优先写群体动作、队形、节奏和环境，不逐个写面部细节。
+
+### H. 负面提示词归位
+
+正文只写正向执行目标。人物崩坏、口型崩坏、脸型漂移、动作卡顿、风向混乱、布料无重量感、面部平光、死黑无细节、塑料皮肤、无眼神光等故障项，统一写入【负面提示词】对应类别，不得混入正文。如果最终输出格式只允许一个【负面提示词】段落，可将人物类、动作类、风力类、面光类、场景类、风格类合并为紧凑列表。
+
+
+长度原则：不要极简，也不要写成超长导演说明书。15 秒多镜头视频的正文优先控制在约 1200-1800 中文字，负面提示词约 120-300 中文字，通常 5-7 个镜头，每个镜头 2-4 句。用户明确要求更详细时可以增加，但不得重复堆叠同类信息。
+
+时间轴执行原则：多镜头视频必须写清镜头切点、机位、运镜、焦点、主体动作、景深或环境变化。若镜头包含人物，则人物动作、表情肢体联动、口型、人物面部光影、衣物饰品与环境动态、人物一致性等内容，统一按照《人物镜头强制覆盖规则》判断触发并补足。时间轴可以用自然语言段落呈现，不强制逐项列出固定字段，但每个镜头内部必须具有可执行动作、镜头目的和画面变化。
+
+风动执行原则：当镜头中出现发丝、布料、披帛、饰品、纱幔、竹叶、云雾、水面、烟、雨雪或其他可动态材质时，必须通过《人物镜头强制覆盖规则》判断触发，并以 `references/seedance-wind-softbody-standard.md` 作为具体实现标准。顶层规则只负责触发条件与覆盖要求；具体风场、材质重量、响应速度、延迟、回弹和负面风力类故障词，以风动标准为准。
+
+正文提示词只写正向模型执行内容；负面、禁止、避免和故障描述放入【负面提示词】。如果目标平台没有独立负面提示词输入框，提示用户不要把负面段混入主提示词。
+
+OpenAI image-family / GPT-image / image2 图片提示词默认输出自然语言段落，不输出 Midjourney、Stable Diffusion、ComfyUI、Flux 或 tag-soup 格式，也不默认拆成正负面提示词。若图片主体包含人物，则人物部分必须遵循《人物镜头强制覆盖规则》；若存在人物参考图，则同时遵循参考图一致性规则；若画面为人物中近景、近景或特写，则必须补足人物面部光影；若存在发丝、衣物、饰品或环境动态材质，则必须补足对应动态描述。图片提示词最终仍保持自然语言段落，不输出视频时间轴，除非用户明确要求关键帧序列或分镜。
 
 ## 错误 / 正确行为
 
@@ -244,41 +229,32 @@ OpenAI image-family / GPT-image / image2 图片提示词默认输出自然语言
 
 正确快捷：用户说“一个女孩在唱歌，直接生成，不用问”，助手自动补齐非核心参数，直接输出最终提示词，并确保时间轴完整可执行。
 
+
+## 人物相关子规则定位
+
+《人物镜头强制覆盖规则》是人物镜头的唯一顶层判断规则。以下 references 只作为具体写法和素材库，不再单独定义顶层强制项：
+
+- `optimizer-v5/reference-fidelity-system.md`：用于人物参考图、定妆图、角色模板、三视图、多视角、首帧和尾帧的人物一致性实现。
+- `optimizer-v5/character-sheet-continuity-system.md`：用于三视图、多视角、正面全身、角色设定图和后续角色连续性实现。
+- `optimizer-v5/seedance-expression-motion-rules.md`：用于人物表情、口型、说唱表演和肢体联动的具体写法。
+- `optimizer-v5/seedance-closeup-face-lighting-rules.md`：用于人物中近景、近景、特写和面部特写的人物面部光影写法。
+- `optimizer-v5/seedance-closeup-face-lighting-library.md`：只作为面光预设库，单镜头最多选择一组，不得堆叠多组面光。
+- `references/seedance-wind-softbody-standard.md`：用于发丝、布料、饰品、纱幔、云雾、水面等动态材质的风场和柔体动力学实现。
+
+执行顺序为：先由《人物镜头强制覆盖规则》判断是否触发，再读取对应子规则实现细节。
+
 ## references 读取规则
 
-根据任务需要读取：core-workflow.md、restatement-stage-flow.md、project-type-rules.md、video-rules.md、classic-shot-library.md、templates.md、timeline-execution-rules.md、timeline-quality-gates.md、quality-control.md、reference-material-guide.md、shot-size-rules.md、final-prompt-purity.md、camera-movement-library.md、concert-live-mv-rules.md、reference-isolation-rules.md、script-learning-index.md、concert-performance-action-library.md、concert-shot-language-library.md、lighting-emotion-library.md。
+根据任务需要读取：core-workflow.md、restatement-stage-flow.md、project-type-rules.md、video-rules.md、classic-shot-library.md、templates.md、timeline-execution-rules.md、timeline-quality-gates.md、quality-control.md、reference-material-guide.md、shot-size-rules.md、final-prompt-purity.md、camera-movement-library.md、concert-live-mv-rules.md、reference-isolation-rules.md、script-learning-index.md、concert-performance-action-library.md、concert-shot-language-library.md、lighting-emotion-library.md、seedance2-concise-execution-standard.md、seedance-wind-softbody-standard.md。
 
 涉及参考图、真实摄影、OpenAI image-family、Seedance 语序权重、表情动作、面光、景深、运镜转场或工业化分镜时，优先读取 `optimizer-v5/` 下的对应规则文件；这些规则作为视觉执行层，不替代本 Skill 的确认流程、时间轴结构和最终交付格式。
 
 ## 维护注意事项
 
-- 编辑 `references/` 下的任何 `.md` 文件时，必须同步覆盖 `skill/prompt-script-master/references/` 快照副本，否则会造成规则不一致。
-- ⚠️ **示例隔离铁律**：在任意规则文件中新增或编辑示例、模板、范例文本（包括代码块中的提示词片段）时，必须在该示例前添加 ⚠️ 免责声明，明确标注"仅供参考格式和写作手法，严禁直接照搬内容"。漏加声明会导致未来 session 的 agent 直接把示例文本复制到生成提示词中，造成严重的规则污染。声明格式：`> ⚠️ **以下[模板/示例/范例]仅用于参考[格式结构/写作手法/权重用法]，严禁直接照搬[具体内容/场景设定/人物身份/光影描述]。**`
-- ⚠️ **快照 SKILL.md 已删除**：`skill/prompt-script-master/SKILL.md` 已删除以消除与主 `SKILL.md` 的 `name` 字段歧义（两者同名会导致 `skill_view` 拒绝加载）。快照同步时**不得**将 `SKILL.md` 复制到快照目录。详细同步规程见 `references/snapshot-sync-procedure.md`。
-- 重大规则变更或用户要求自检时，按 `references/self-audit-procedure.md` 执行三步审计（旧规则残留扫描→跨文件冲突检查→引用链路完整性），确保无残留/冲突/断链。
-- 时间轴规则的唯一权威来源是 `references/timeline-execution-rules.md` 和 `references/timeline-quality-gates.md`。其 7 项分段格式（景别 + 运镜状态 + 人物核心动作 + 衣发纱幔动态 + 人物光影 + 环境细节 + 景深变化）基于 Seedance 权重逻辑优化，是时间轴分段的唯一标准。其中「人物光影」项的具体书写规范（光源锚定、分机位点位库、一致性四步校验、结构化顺序、禁写条款）的唯一权威来源是 `references/optimizer-v5/seedance-closeup-face-lighting-rules.md`。权重标记的分层体系（S/A/B 三级、使用频率上限、禁止项）的权威来源是 `references/optimizer-v5/seedance-prompt-order-rules.md`（权重规范标准化章节）。
-- > **旧版 9 项格式已废弃。** 禁止在任何文件中使用或引用旧版 9 项格式。
-- ⚠️ 格式变更联动清单：当输出结构（三段式⇄两段式）或时间轴格式（7 项字段）发生变更时，必须同步更新以下 **全部文件**并覆盖快照副本：
-  1. `SKILL.md`（最终提示词结构 & 维护注意事项）
-  2. `templates/video-prompt-template.md`（输出模板）
-  3. `references/timeline-execution-rules.md`（执行规则）
-  4. `references/timeline-quality-gates.md`（质量门控）
-  5. `references/templates.md`（结构参考）
-  6. `references/video-rules.md`（视频规则）
-  7. `references/quality-control.md`（质量控制清单）
-  8. `references/optimizer-v5/output-templates.md`（V5 输出模板）
-  9. `scripts/prompt_checker.py`（校验逻辑）
-  10. `scripts/prompt_wizard.py`（向导输出模板）
-  11. `docs/output-format.md`（输出格式文档）
-  12. `docs/seedance2-full-reference.md`（Seedance 参考文档）
-  13. `docs/golden-tests.md`（全局通过标准 & 测试用例）
-  14. `README.md`（功能描述）
-  15. `references/optimizer-v5/seedance-closeup-face-lighting-rules.md`（人物光影→面光规范联动）
-  16. `references/optimizer-v5/seedance-prompt-order-rules.md`（权重规范标准化章节→S/A/B 三级体系联动）
-  17. `references/anchor-light-source-rule.md`（锚点光源强制规则→所有光影规则的"唯一圆心"）
-  **全部更新后**按 `references/snapshot-sync-procedure.md` 同步快照（`skill/prompt-script-master/` 下对应路径），但排除 `SKILL.md`（快照中已删除以避免 `name` 歧义）。快照同步切勿遗漏 `docs/` 和 `references/optimizer-v5/` 子目录。
-
-  ⚠️ **快照同步工具限制**：`skill_manage` 的 `write_file` 和 `patch` 仅支持在技能自身的 `assets/`、`references/`、`scripts/`、`templates/` 子目录下操作，不支持 `docs/` 子目录和 `skill/prompt-script-master/` 快照嵌套路径。同步 `docs/` 和快照副本必须通过 `terminal` 执行 `cp` 命令。
-- ⚠️ `optimizer-v5/seedance-prompt-order-rules.md` 的 Timeline splitting / 时间轴适配规则**已降级为非权威参考**（7 项格式是本目录唯一标准），但其「权重规范标准化」章节是权重标记的**唯一权威来源**。`optimizer-v5/seedance-camera-movement-transition-rules.md` 同理降级。
-- ⚠️ **锚点光源强制规则**：`references/anchor-light-source-rule.md` 是技能级约束层规则——不包含具体面光/环境光写法，唯一作用是确保每条提示词先确立锚点光源，所有其他光影规则（面光、骨骼光影、环境光、权重）生成前必须先对齐锚点。本规则不修改任何现有光影规则文件的内部内容，仅要求生成时以锚点为"唯一圆心"推导。
-- ⚠️ **分段触发规则**（S8 阶段）：视频时长 > 5 秒且用户未声明"一镜到底"时，必须执行以下 4 步再生成时间轴：（1）**询问用户**是否需要分段；（2）**不定长分配**——不套用固定模板，根据每段内容权重合理分配时长；（3）**自行检查**——分配后自检动作密度匹配、总时长加总、段间推进逻辑；（4）**确认后继续**——将分段方案和时长展示给用户确认，确认后再写入 7 项格式的时间轴内容。用户明确要求一镜到底时跳过此步骤。
+- 当前最终视频提示词权威标准是《人物镜头强制覆盖规则》、`references/seedance2-concise-execution-standard.md`、`references/seedance-wind-softbody-standard.md` 和 `templates/video-prompt-template.md`。
+- 旧的三板块视频模板已废弃，不得作为最终输出结构。
+- `timeline-execution-rules.md` 和 `timeline-quality-gates.md` 只作为镜头执行覆盖与质量检查，不要求最终提示词逐项列出字段。
+- 修改最终输出格式或人物镜头规则时必须同步检查并更新：`SKILL.md`、`templates/video-prompt-template.md`、`references/seedance2-concise-execution-standard.md`、`references/seedance-wind-softbody-standard.md`、`references/timeline-execution-rules.md`、`references/timeline-quality-gates.md`、`references/quality-control.md`、`docs/output-format.md`、`scripts/prompt_checker.py`。
+- 修改人物镜头相关规则时，必须优先检查并同步更新：《人物镜头强制覆盖规则》、`optimizer-v5/reference-fidelity-system.md`、`optimizer-v5/character-sheet-continuity-system.md`、`optimizer-v5/seedance-expression-motion-rules.md`、`optimizer-v5/seedance-closeup-face-lighting-rules.md`、`references/seedance-wind-softbody-standard.md`、`references/timeline-execution-rules.md`、`references/timeline-quality-gates.md`、`references/quality-control.md`、`scripts/prompt_checker.py`。
+- `optimizer-v5/` 负责视觉执行细节；当其模板与当前最终输出标准冲突时，以当前标准为准。
+- 版本发布时更新 `VERSION`、`README.md` 和 `CHANGELOG.md`。
