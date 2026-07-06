@@ -6,7 +6,7 @@ Use composition terms only to improve believable camera control for OpenAI image
 
 ## Composition library override
 
-When `references/composition-reference-library.md` contains a closer shot-design pattern or uploaded composition card, use that library first. Use this file as the fallback language system for naming composition, spatial depth, and focal point. Never let composition language create a poster-like AI layout; keep every frame physically shootable for AIMV / AI short-drama production.
+When `composition-reference-library.md` contains a closer text-only shot-design pattern, use that pattern first. Use this file as the fallback language system for naming composition, spatial depth, and focal point. Never let composition language create a poster-like AI layout; keep every frame physically shootable for AIMV / AI short-drama production.
 
 
 Every generated image prompt must include professional composition, spatial structure, and a clearly assigned focal point.

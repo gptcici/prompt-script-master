@@ -33,6 +33,5 @@ MV / 多场景音乐短片任务：
 上传图片 / 视频 / 辅助资料任务：
 
 1. `reference-isolation-rules.md`
-2. `asset-library-guide.md`
-3. `reference-material-guide.md`
-4. `quality-control.md`
+2. `reference-material-guide.md`
+3. `quality-control.md`

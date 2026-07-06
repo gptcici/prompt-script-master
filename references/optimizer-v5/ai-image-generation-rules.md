@@ -28,7 +28,7 @@ When the user gives vague style words or a named visual style, do not leave the 
 one strong style anchor + 3 to 5 concrete visual features
 ```
 
-Use `references/director-style-anchors.md` as the style compiler.
+Use `references/optimizer-v5/director-style-anchors.md` as the style compiler.
 
 Strong anchors may include director/cinematography shorthand, classic genre or IP-like aesthetics, and professional media such as 35mm film, IMAX large-format, CCD retro camera, or hand-painted watercolor. The anchor must be supported by concrete visual features:
 

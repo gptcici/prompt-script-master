@@ -2,4 +2,13 @@ interface:
   display_name: 提示词脚本大师
   short_description: 融合视频脚本与真实影像提示词优化，支持Seedance、AIMV/MV、参考图锁脸、运镜、光影和工业化分镜
   icon: 🎬
-  primary_color: "#7C3AED"
+  primary_color: '#7C3AED'
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
