@@ -1,89 +1,60 @@
 # Quality Control
 
-## 默认原则
+## Default principle
 
-质量检查默认内部执行，不展示给用户。
+Quality checks are performed internally. Do not show scoring unless the user asks for an audit.
 
-用户只看到优化后的最终提示词，除非用户明确要求查看评分或检查过程。
+## Current final-output standard
 
-## 质量检查清单
+Use `references/seedance2-concise-execution-standard.md` as the primary final prompt quality standard.
 
-内部自检按以下维度逐项通过：
+## Checklist
 
-### 主体与结构
-1. 主体是否明确。
-2. 整体目标、风格和基调是否合并清楚，未拆散过碎。
-3. 动作是否可见、可执行（非抽象情绪描述）。
-4. 正文是否出现"禁止""不要""避免""不得"等否定词（应分离到负面提示词）。
-5. 正文是否出现导演创作思路、心理感受、逻辑说明等非视觉化抽象描述。
+### Structure
+1. Final video prompts use `【正文提示词】` and `【负面提示词】`.
+2. Main prompt is positive, model-facing, and free of conversational notes.
+3. Negative wording is placed in the negative prompt.
+4. Length is controlled: for a typical 15-second multi-shot video, main prompt about 1200-1800 Chinese characters and negative prompt about 120-300 Chinese characters.
 
-### 时间轴完整性（7 项必检）
+### Anchors
+5. Reference image responsibilities are explicit when references exist.
+6. Character identity / costume / prop locks are concise and near the beginning.
+7. Global light source anchor has one physical source, direction, color, dark-side detail, and weak bounce.
+8. Global wind / soft-body dynamics anchor exists when hair, fabric, veils, leaves, clouds, mist, smoke, water, or other wind-driven materials are important.
+9. Wind scenes define one direction and force, then layer subject, prop, and environment responses with material speed differences, delay, rebound, and gravity.
 
-> **旧版 9 项格式已废弃，以 7 项格式为唯一标准。**
+### Shot execution
+10. Multi-shot videos have clear time ranges and cut points.
+11. Each shot covers camera, action, and environment/light/motion.
+12. Body, head, hand, expression, fabric, hair, or object actions are visible and non-mechanical.
+13. Character shots comply with `人物镜头强制覆盖规则`: action and expression/body linkage are present; mouth movement appears when speaking/singing/lip-sync; face lighting appears for medium close-up or closer shots; dynamic hair/wardrobe/accessory/environment materials follow unified motion; reference identity is locked when references exist.
+14. Focus and depth behavior are described where important.
+15. Shot descriptions avoid overloaded explanation and repeated style adjectives.
 
-对照 `timeline-execution-rules.md` 的 7 项格式，每个时间轴段落必须覆盖：
-6. 景别（远景/全景/中景/近景/特写）。
-7. 运镜状态（固定/推/拉/摇/跟/环绕/升降，含方向和速度）。
-8. 人物核心动作（主体在做什么，含面部表情和身体动作）。
-9. 衣发纱幔动态（风带动的发丝、衣袖、裙摆、披帛、珠链等服饰动态，集中描述）。
-10. 人物光影（按锚点光源推导：光源方向→骨骼高光点位→暗部过渡→整体质感，具体规范见 `anchor-light-source-rule.md` 和 `seedance-closeup-face-lighting-rules.md`）。
-11. 环境细节（场景光源变化、阴影、色温、背景道具变化、空间层次）。
-12. 景深变化（前后景虚实切换、焦点转移、景深推进或释放）。
+### Consistency
+16. Light direction remains consistent unless intentionally changed.
+17. Wind/motion direction remains consistent unless intentionally changed.
+18. Character, costume, prop, architecture, and scene remain continuous.
+19. The final prompt is copy-ready.
 
-### 段落衔接与输出
-13. 首段是否建立人物主体 + 关键外形特征。
-14. 后续段落是否未重复首段角色外貌。
-15. 光线、场景、镜头信息是否进入每个时间轴段落，而非仅单独板块。
-16. 最终提示词是否符合参考库隔离规则（`reference-isolation-rules.md`）。
-17. 衣发动态、光影效果是否集中描述而非分散重复。
+## Hard stops
 
-### 约束与可复制性
-18. 一致性约束和负面提示词是否分离（正文无否定词）。
-19. 全局一致性约束是否与场景匹配且精简。
-20. 是否可直接复制使用。
+Do not output a final prompt if:
+- core subject is unclear;
+- reference images conflict and cannot be prioritized;
+- target format is unclear and the user has not authorized default assumptions;
+- requested single-shot duration or action density is physically unreasonable;
+- the prompt would use deprecated final structure.
 
-## 一票否决
+## Auto-fix
 
-出现以下情况，不能直接输出最终提示词：
-
-- **锚点光源缺失**：整个提示词未明确设定唯一锚点光源（类型+方向+位置三要素，见 `anchor-light-source-rule.md` §六）。
-- 主体不明确。
-- 严重逻辑冲突。
-- 单镜头超过 15 秒。
-- 没有动作细节。
-- 时间轴缺少 7 项中任一项（景别/运镜/动作/衣发/人物光影/环境/景深）。
-- 时间轴段落开头缺少与前一帧的时间或空间关联。
-- 只在单独"镜头语言"段落写运镜，但时间轴段落未写具体运镜。
-- 只在单独"灯光、场景与动态"段落写场景和光线，但时间轴段落未写具体变化。
-- 镜头目标、整体风格和情绪基调被拆散得过碎，无法形成统一基调。
-- 正文出现否定词未分离到负面提示词。
-- 正文出现非视觉化抽象描述。
-- 参考素材冲突。
-- 首尾帧无法自然衔接。
-- 视频 > 5 秒、未声明一镜到底，且未询问用户是否分段（`timeline-execution-rules.md` 分段触发条件）。
-
-## 自动优化
-
-以下问题可以自动修：
-
-- 动作细节不足。
-- 时间轴缺少 7 项中某一项（补齐缺失项）。
-- 情绪太抽象（转化为具象动作/光影/镜头）。
-- 禁止项在正文中（剥离到负面提示词）。
-- 文案过于文学化。
-
-## 必须询问
-
-以下问题必须询问用户：
-
-- 核心主体不清。
-- 多主体主次不明。
-- 参考素材互相冲突。
-- 首帧与尾帧不能自然连接。
-- 用户目标和素材不一致。
-- 单镜头时长不合理。
-- 视频 > 5 秒且未声明一镜到底时，必须询问是否分段。
-
-## 通过标准
-
-最终提示词应具体、连续、无严重冲突，分为正文提示词和负面提示词两部分，时间轴每段按 7 项格式逐项覆盖，并可直接复制到 AI 视频生成模型。
+Automatically fix:
+- overly long repeated wording;
+- missing light or wind / soft-body dynamics anchors;
+- missing character action or expression/body linkage when a person is the shot subject;
+- missing mouth movement for speaking, singing, or lip-sync;
+- missing close-up face lighting for medium close-up or closer character shots;
+- vague actions;
+- vague wind claims such as `大风` or `风很强` without visible material response;
+- negative instructions accidentally placed in the main prompt;
+- excessive negative prompt duplicates.
